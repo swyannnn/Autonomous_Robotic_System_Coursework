@@ -42,3 +42,17 @@ class TaskManager:
         for cart in self.raw_envs:
             set_task_parameters(cart, params["masspole"], params["force_mag"])
         print(f"[TaskManager] Switched to Task {task_index+1}: {params}")
+
+    def unwrap_single(self, env):
+        """Fully unwrap a single env from wrappers."""
+        e = env
+        while hasattr(e, "env"):
+            e = e.env
+        return e
+
+    def apply_params(self, env, params):
+        """Apply params to one raw env."""
+        env.masspole = params["masspole"]
+        env.force_mag = params["force_mag"]
+        env.total_mass = env.masspole + env.masscart
+        env.polemass_length = env.masspole * env.length

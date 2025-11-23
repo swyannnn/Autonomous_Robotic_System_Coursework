@@ -38,7 +38,7 @@ class Args:
     # Algorithm specific arguments
     env_id: str = "CartPole-v1"
     """the id of the environment"""
-    total_timesteps: int = 500000
+    total_timesteps: int = 5000000
     """total timesteps of the experiments"""
     learning_rate: float = 2.5e-4
     """the learning rate of the optimizer"""
@@ -80,9 +80,9 @@ class Args:
     """the number of iterations (computed in runtime)"""
 
     # for evaluation
-    eval_episodes: int = 100
+    eval_episodes: int = 10
     """number of episodes to test the agent during evaluation"""
-    eval_steps: int = 10000
+    eval_steps: int = 100
     """run evaluation every n steps"""
     target_return: int = 475
     """target return to consider the task solved (only for CartPole-v1)"""
@@ -150,6 +150,7 @@ if __name__ == "__main__":
     # additional variables for logging purposes
     episode_count = 0
     convergence_episode = None
+    best_task_performance = {0: -np.inf, 1: -np.inf, 2: -np.inf, 3: -np.inf}
 
     # Start with Task 1
     current_task = 0
@@ -282,24 +283,52 @@ if __name__ == "__main__":
         writer.add_scalar("losses/explained_variance", explained_var, global_step)
         writer.add_scalar("charts/SPS", int(global_step / (time.time() - start_time)), global_step)
 
+        if iteration % args.eval_steps == 0:
+            print("Evaluating per task...")
+
+            task_returns = []
+            task_success = []
+            forgetting_scores = []
+
+            for task_id in range(4):
+                mean_return, success_rate = evaluate_agent(
+                    agent, make_env, args, device,
+                    task_manager=task_manager, task_id=task_id,
+                    eval_episodes=args.eval_episodes
+                )
+
+                writer.add_scalar(f"eval/task_{task_id}/mean_return", mean_return, global_step)
+                writer.add_scalar(f"eval/task_{task_id}/success_rate", success_rate, global_step)
+
+                task_returns.append(mean_return)
+                task_success.append(success_rate)
+
+                # 1. Save best historical performance
+                best_task_performance[task_id] = max(best_task_performance[task_id], mean_return)
+
+                # 2. Compute forgetting: best - current
+                forgetting = best_task_performance[task_id] - mean_return
+                forgetting_scores.append(forgetting)
+
+                writer.add_scalar(f"eval/task_{task_id}/forgetting", forgetting, global_step)
+
+            # log average performance across tasks
+            writer.add_scalar("eval/avg_mean_return", np.mean(task_returns), global_step)
+            writer.add_scalar("eval/avg_success_rate", np.mean(task_success), global_step)
+            writer.add_scalar("eval/avg_forgetting", np.mean(forgetting_scores), global_step)
+
+            # calculate convergence speed
+            if convergence_episode is None and np.mean(task_returns) >= args.target_return:
+                convergence_episode = episode_count
+                writer.add_scalar("eval/convergence_episode", convergence_episode, global_step)
+                print(f"[CONVERGED] at episode {convergence_episode}")
+
+
         if episode_count % args.task_switch_episode_interval == 0:
             current_task = (current_task + 1) % 4
             task_manager.set_task(current_task)
             writer.add_scalar("charts/task_id", current_task, global_step)
             print(f"[TASK SWITCH] Switched to task {current_task} at episode {episode_count}")
-
-        if iteration % args.eval_steps == 0:
-            print("Evaluating agent...")
-            mean_return, success_rate = evaluate_agent(agent, make_env, args, device, eval_episodes=args.eval_episodes)
-            writer.add_scalar("eval/mean_return", mean_return, global_step)
-            writer.add_scalar("eval/success_rate", success_rate, global_step)
-            print(f"[EVAL] iter={iteration}  mean={mean_return:.1f}  success={success_rate:.2f}")
-
-            # calculate convergence speed
-            if convergence_episode is None and mean_return >= args.target_return:
-                convergence_episode = episode_count
-                writer.add_scalar("eval/convergence_episode", convergence_episode, global_step)
-                print(f"[CONVERGED] at episode {convergence_episode}")
-
+            
     envs.close()
     writer.close()

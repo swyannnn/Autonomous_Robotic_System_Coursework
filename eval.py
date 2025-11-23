@@ -4,7 +4,7 @@ import gymnasium as gym
 import torch
 
 
-def evaluate_agent(agent, make_env, args, device, eval_episodes: int = 10):
+def evaluate_agent(agent, make_env, args, device, task_manager=None, task_id=None, eval_episodes=10):
     """
     Evaluate the agent for `eval_episodes` episodes.
     Returns:
@@ -15,6 +15,12 @@ def evaluate_agent(agent, make_env, args, device, eval_episodes: int = 10):
     eval_envs = gym.vector.SyncVectorEnv(
         [make_env(args.env_id, 0, False, f"{args.exp_name}_eval")]
     )
+
+    # unwrap and apply selected task parameters
+    if task_manager is not None and task_id is not None:
+        raw_env = task_manager.unwrap_single(eval_envs.envs[0]) 
+        params = task_manager.tasks[task_id]
+        task_manager.apply_params(raw_env, params)
 
     agent.eval()
 
