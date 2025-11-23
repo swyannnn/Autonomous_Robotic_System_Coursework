@@ -82,6 +82,8 @@ class Args:
     """number of episodes to test the agent during evaluation"""
     eval_steps: int = 10000
     """run evaluation every n steps"""
+    target_return: 475
+    """target return to consider the task solved (only for CartPole-v1)"""
 
 
 def make_env(env_id, idx, capture_video, run_name):
@@ -188,6 +190,10 @@ if __name__ == "__main__":
     next_obs = torch.Tensor(next_obs).to(device)
     next_done = torch.zeros(args.num_envs).to(device)
 
+    # additional variables for logging purposes
+    episode_count = 0
+    convergence_episode = None
+
     for iteration in range(1, args.num_iterations + 1):
         # Annealing the rate if instructed to do so.
         if args.anneal_lr:
@@ -216,6 +222,7 @@ if __name__ == "__main__":
             if "final_info" in infos:
                 for info in infos["final_info"]:
                     if info and "episode" in info:
+                        episode_count += 1
                         print(f"global_step={global_step}, episodic_return={info['episode']['r']}")
                         writer.add_scalar("charts/episodic_return", info["episode"]["r"], global_step)
                         writer.add_scalar("charts/episodic_length", info["episode"]["l"], global_step)
@@ -318,8 +325,13 @@ if __name__ == "__main__":
             mean_return, success_rate = evaluate_agent(agent, make_env, args, device, eval_episodes=args.eval_episodes)
             writer.add_scalar("eval/mean_return", mean_return, global_step)
             writer.add_scalar("eval/success_rate", success_rate, global_step)
-
             print(f"[EVAL] iter={iteration}  mean={mean_return:.1f}  success={success_rate:.2f}")
+
+            # calculate convergence speed
+            if convergence_episode is None and mean_return >= args.target_return:
+                convergence_episode = episode_count
+                writer.add_scalar("eval/convergence_episode", convergence_episode, global_step)
+                print(f"[CONVERGED] at episode {convergence_episode}")
 
     envs.close()
     writer.close()
