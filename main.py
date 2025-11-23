@@ -4,13 +4,15 @@ import random
 import time
 from dataclasses import dataclass
 from eval import evaluate_agent
+from utils import make_env
+from tasks import TaskManager
+from agent import Agent
 import gymnasium as gym
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import tyro
-from torch.distributions.categorical import Categorical
 from torch.utils.tensorboard import SummaryWriter
 
 
@@ -82,57 +84,11 @@ class Args:
     """number of episodes to test the agent during evaluation"""
     eval_steps: int = 10000
     """run evaluation every n steps"""
-    target_return: 475
+    target_return: int = 475
     """target return to consider the task solved (only for CartPole-v1)"""
 
-
-def make_env(env_id, idx, capture_video, run_name):
-    def thunk():
-        if capture_video and idx == 0:
-            env = gym.make(env_id, render_mode="rgb_array")
-            env = gym.wrappers.RecordVideo(env, f"videos/{run_name}")
-        else:
-            env = gym.make(env_id)
-        env = gym.wrappers.RecordEpisodeStatistics(env)
-        return env
-
-    return thunk
-
-
-def layer_init(layer, std=np.sqrt(2), bias_const=0.0):
-    torch.nn.init.orthogonal_(layer.weight, std)
-    torch.nn.init.constant_(layer.bias, bias_const)
-    return layer
-
-
-class Agent(nn.Module):
-    def __init__(self, envs):
-        super().__init__()
-        self.critic = nn.Sequential(
-            layer_init(nn.Linear(np.array(envs.single_observation_space.shape).prod(), 64)),
-            nn.Tanh(),
-            layer_init(nn.Linear(64, 64)),
-            nn.Tanh(),
-            layer_init(nn.Linear(64, 1), std=1.0),
-        )
-        self.actor = nn.Sequential(
-            layer_init(nn.Linear(np.array(envs.single_observation_space.shape).prod(), 64)),
-            nn.Tanh(),
-            layer_init(nn.Linear(64, 64)),
-            nn.Tanh(),
-            layer_init(nn.Linear(64, envs.single_action_space.n), std=0.01),
-        )
-
-    def get_value(self, x):
-        return self.critic(x)
-
-    def get_action_and_value(self, x, action=None):
-        logits = self.actor(x)
-        probs = Categorical(logits=logits)
-        if action is None:
-            action = probs.sample()
-        return action, probs.log_prob(action), probs.entropy(), self.critic(x)
-
+    # for task switching
+    task_switch_episode_interval: int = 100
 
 if __name__ == "__main__":
     args = tyro.cli(Args)
@@ -173,6 +129,7 @@ if __name__ == "__main__":
     assert isinstance(envs.single_action_space, gym.spaces.Discrete), "only discrete action space is supported"
 
     agent = Agent(envs).to(device)
+    task_manager = TaskManager(envs)
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
     # ALGO Logic: Storage setup
@@ -193,6 +150,11 @@ if __name__ == "__main__":
     # additional variables for logging purposes
     episode_count = 0
     convergence_episode = None
+
+    # Start with Task 1
+    current_task = 0
+    task_manager.set_task(current_task)
+    writer.add_scalar("charts/task_id", current_task, global_step)
 
     for iteration in range(1, args.num_iterations + 1):
         # Annealing the rate if instructed to do so.
@@ -319,6 +281,12 @@ if __name__ == "__main__":
         writer.add_scalar("losses/clipfrac", np.mean(clipfracs), global_step)
         writer.add_scalar("losses/explained_variance", explained_var, global_step)
         writer.add_scalar("charts/SPS", int(global_step / (time.time() - start_time)), global_step)
+
+        if episode_count % args.task_switch_episode_interval == 0:
+            current_task = (current_task + 1) % 4
+            task_manager.set_task(current_task)
+            writer.add_scalar("charts/task_id", current_task, global_step)
+            print(f"[TASK SWITCH] Switched to task {current_task} at episode {episode_count}")
 
         if iteration % args.eval_steps == 0:
             print("Evaluating agent...")
