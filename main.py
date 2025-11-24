@@ -157,6 +157,9 @@ if __name__ == "__main__":
     task_manager.set_task(current_task)
     writer.add_scalar("charts/task_id", current_task, global_step)
 
+    if args.env_id == "CartPole-v1":
+        success_threshold = 500
+
     for iteration in range(1, args.num_iterations + 1):
         # Annealing the rate if instructed to do so.
         if args.anneal_lr:
@@ -187,8 +190,14 @@ if __name__ == "__main__":
                     if info and "episode" in info:
                         episode_count += 1
                         print(f"global_step={global_step}, episodic_return={info['episode']['r']}")
-                        writer.add_scalar("charts/episodic_return", info["episode"]["r"], global_step)
-                        writer.add_scalar("charts/episodic_length", info["episode"]["l"], global_step)
+                        writer.add_scalar("charts/episodic_return", info["episode"]["r"], episode_count)
+                        writer.add_scalar("charts/episodic_length", info["episode"]["l"], episode_count)
+                        writer.add_scalar("charts/global_step_return", info["episode"]["r"], global_step)
+
+                        if episode_count % args.task_switch_episode_interval == 0:
+                            current_task = (current_task + 1) % 4
+                            task_manager.set_task(current_task)
+            writer.add_scalar("charts/task_id_episode", current_task, episode_count)
 
         # bootstrap value if not done
         with torch.no_grad():
@@ -293,6 +302,7 @@ if __name__ == "__main__":
             for task_id in range(4):
                 mean_return, success_rate = evaluate_agent(
                     agent, make_env, args, device,
+                    success_threshold=success_threshold,
                     task_manager=task_manager, task_id=task_id,
                     eval_episodes=args.eval_episodes
                 )
@@ -323,12 +333,7 @@ if __name__ == "__main__":
                 writer.add_scalar("eval/convergence_episode", convergence_episode, global_step)
                 print(f"[CONVERGED] at episode {convergence_episode}")
 
-
-        if episode_count % args.task_switch_episode_interval == 0:
-            current_task = (current_task + 1) % 4
-            task_manager.set_task(current_task)
-            writer.add_scalar("charts/task_id", current_task, global_step)
-            print(f"[TASK SWITCH] Switched to task {current_task} at episode {episode_count}")
+        writer.add_scalar("charts/task_id", current_task, global_step)
             
     envs.close()
     writer.close()

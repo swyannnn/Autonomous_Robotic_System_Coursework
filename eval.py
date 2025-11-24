@@ -4,7 +4,7 @@ import gymnasium as gym
 import torch
 
 
-def evaluate_agent(agent, make_env, args, device, task_manager=None, task_id=None, eval_episodes=10):
+def evaluate_agent(agent, make_env, args, device, success_threshold=500, task_manager=None, task_id=None, eval_episodes=10):
     """
     Evaluate the agent for `eval_episodes` episodes.
     Returns:
@@ -46,11 +46,9 @@ def evaluate_agent(agent, make_env, args, device, task_manager=None, task_id=Non
                 # record return
                 episodic_returns.append(info["episode"]["r"])
 
-                # detect success (CartPole-specific: time limit reached)
-                terminated = info.get("terminated", False)
-                truncated = info.get("truncated", False)
-
-                if (not terminated) and truncated:
+                # detect success (CartPole-specific: length >= 500)
+                length = int(info["episode"]["l"])
+                if length >= 500:
                     successes += 1
 
         obs = torch.tensor(next_obs, dtype=torch.float32, device=device)
@@ -62,23 +60,3 @@ def evaluate_agent(agent, make_env, args, device, task_manager=None, task_id=Non
     success_rate = successes / eval_episodes
 
     return mean_return, success_rate
-
-
-if __name__ == "__main__":
-    from huggingface_hub import hf_hub_download
-
-    from cleanrl.ppo_continuous_action import Agent, make_env
-
-    model_path = hf_hub_download(
-        repo_id="sdpkjc/Hopper-v4-ppo_continuous_action-seed1", filename="ppo_continuous_action.cleanrl_model"
-    )
-    evaluate(
-        model_path,
-        make_env,
-        "Hopper-v4",
-        eval_episodes=10,
-        run_name=f"eval",
-        Model=Agent,
-        device="cpu",
-        capture_video=False,
-    )
