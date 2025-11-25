@@ -48,7 +48,7 @@ def evaluate_agent(agent, make_env, args, device, success_threshold=500, task_ma
 
                 # detect success (CartPole-specific: length >= 500)
                 length = int(info["episode"]["l"])
-                if length >= 500:
+                if length >= success_threshold:
                     successes += 1
 
         obs = torch.tensor(next_obs, dtype=torch.float32, device=device)

@@ -73,7 +73,7 @@ class BasePPOAgent(nn.Module):
 class ParsevalPPOAgent(nn.Module):
     def __init__(self, envs, net_width=64,
                  add_diag_layer=True, activation='tanh',
-                 input_scale =1, learnable_input_scale=False):
+                 input_scale=1, learnable_input_scale=False):
         super().__init__()
 
         # TODO: check how many envs are created

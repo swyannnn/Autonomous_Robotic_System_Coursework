@@ -2,3 +2,6 @@
 
 
 print(vars(envs.envs[0].env.env.env.env))
+
+how to calculate forget score
+https://arxiv.org/pdf/1706.08840

@@ -42,7 +42,7 @@ class Args:
     """total timesteps of the experiments"""
     learning_rate: float = 2.5e-4
     """the learning rate of the optimizer"""
-    num_envs: int = 4
+    num_envs: int = 1
     """the number of parallel game environments"""
     num_steps: int = 128
     """the number of steps to run in each environment per policy rollout"""
@@ -78,6 +78,14 @@ class Args:
     """the Parseval regularization strength (should try both 0.001 & 0.0001)"""
     net_width: int = 64
     """Width of the network layers"""
+    add_diag_layer: bool = True
+    """Whether to add a diagonal layer in the Parseval network"""
+    activation: str = 'tanh'
+    """Activation function to use in the Parseval network"""
+    input_scale: float = 1
+    """Input scaling factor for the Parseval network"""
+    learnable_input_scale: bool = False
+    """Whether the input scaling factor is learnable"""
 
     # to be filled in runtime
     batch_size: int = 0
@@ -90,13 +98,16 @@ class Args:
     # for evaluation
     eval_episodes: int = 10
     """number of episodes to test the agent during evaluation"""
-    eval_steps: int = 100
-    """run evaluation every n steps"""
     target_return: int = 475
     """target return to consider the task solved (only for CartPole-v1)"""
+    stable_hits_required: int = 10
+    """number of stable hits to consider convergence"""
 
     # for task switching
     task_switch_episode_interval: int = 100
+    """number of episodes between each task switch"""
+    num_tasks: int = 4
+    """total number of tasks"""
 
 if __name__ == "__main__":
     args = tyro.cli(Args)
@@ -139,7 +150,11 @@ if __name__ == "__main__":
     if args.algorithm == "base":
         agent = BasePPOAgent(envs).to(device)
     elif args.algorithm == "parseval":
-        agent = ParsevalPPOAgent(envs, lambda_parseval=args.parseval_reg).to(device)
+        agent = ParsevalPPOAgent(envs, net_width=args.net_width,
+                                add_diag_layer=args.add_diag_layer,
+                                activation=args.activation,
+                                input_scale=args.input_scale,
+                                learnable_input_scale=args.learnable_input_scale).to(device)
     task_manager = TaskManager(envs)
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
@@ -158,15 +173,18 @@ if __name__ == "__main__":
     next_obs = torch.Tensor(next_obs).to(device)
     next_done = torch.zeros(args.num_envs).to(device)
 
-    # additional variables for logging purposes
+    # additional variables
     episode_count = 0
     convergence_episode = None
     best_task_performance = {0: -np.inf, 1: -np.inf, 2: -np.inf, 3: -np.inf}
+    performance_matrix = np.zeros((args.num_tasks, args.num_tasks))
+    task_stable_hits = {t: 0 for t in range(args.num_tasks)}
 
     # Start with Task 1
     current_task = 0
     task_manager.set_task(current_task)
     writer.add_scalar("charts/task_id", current_task, global_step)
+    best_per_task = {t: -np.inf for t in range(args.num_tasks)}
 
     if args.env_id == "CartPole-v1":
         success_threshold = 500
@@ -204,10 +222,63 @@ if __name__ == "__main__":
                         writer.add_scalar("charts/episodic_return", info["episode"]["r"], episode_count)
                         writer.add_scalar("charts/episodic_length", info["episode"]["l"], episode_count)
                         writer.add_scalar("charts/global_step_return", info["episode"]["r"], global_step)
-
+                        
                         if episode_count % args.task_switch_episode_interval == 0:
-                            current_task = (current_task + 1) % 4
+                            prev_task = current_task
+                            current_task = (current_task + 1) % args.num_tasks
                             task_manager.set_task(current_task)
+                            print(f"---- SWITCH TO TASK {current_task + 1} ----")
+
+                            # ==================================
+                            # 2. RUN EVALUATION ON *ALL* TASKS
+                            # ==================================
+                            task_returns = []
+                            task_success = []
+                            forgetting_scores = []
+                            for task_id in range(args.num_tasks):
+                                mean_return, success_rate = evaluate_agent(
+                                    agent, make_env, args, device,
+                                    success_threshold=success_threshold,
+                                    task_manager=task_manager,
+                                    task_id=task_id,
+                                    eval_episodes=args.eval_episodes
+                                )
+
+                                # Log results
+                                writer.add_scalar(f"eval/task_{task_id}/mean_return", mean_return, episode_count)
+                                writer.add_scalar(f"eval/task_{task_id}/success_rate", success_rate, episode_count)
+                                task_returns.append(mean_return)
+                                task_success.append(success_rate)
+
+                                # Update performance matrix
+                                performance_matrix[task_id][prev_task] = mean_return
+
+                                # Update best performance
+                                best_per_task[task_id] = max(best_per_task[task_id], mean_return)
+
+                                # Compute forgetting
+                                forgetting = best_per_task[task_id] - mean_return
+                                writer.add_scalar(f"eval/task_{task_id}/forgetting", forgetting, episode_count)
+                                forgetting_scores.append(forgetting)
+
+                                # ---- per-task convergence tracking ----
+                                if success_rate == 1.0:
+                                    task_stable_hits[task_id] += 1
+                                else:
+                                    task_stable_hits[task_id] = 0   # reset streak
+                                
+                                # check if all tasks have converged
+                                if all([task_stable_hits[t] >= args.stable_hits_required for t in range(args.num_tasks)]):
+                                    if convergence_episode is None:
+                                        convergence_episode = episode_count
+                                        writer.add_scalar("eval/convergence_episode", convergence_episode, episode_count)
+                                        writer.add_text("eval/convergence_info", f"Converged at episode {convergence_episode}", episode_count)
+                                        print(f"[CONVERGED] at episode {convergence_episode}")
+                            writer.add_scalar("eval/avg_mean_return", np.mean(task_returns), episode_count)
+                            writer.add_scalar("eval/avg_success_rate", np.mean(task_success), episode_count)
+                            writer.add_scalar("eval/avg_forgetting", np.mean(forgetting_scores), episode_count)
+
+
             writer.add_scalar("charts/task_id_episode", current_task, episode_count)
 
         # ------------------------------------
@@ -281,15 +352,14 @@ if __name__ == "__main__":
                     v_loss = 0.5 * ((newvalue - b_returns[mb_inds]) ** 2).mean()
 
                 entropy_loss = entropy.mean()
-                if args.algorithm == "base":
-                    loss = pg_loss - args.ent_coef * entropy_loss + v_loss * args.vf_coef
+                loss = pg_loss - args.ent_coef * entropy_loss + v_loss * args.vf_coef
 
                 # ------------------------------------
                 #  Parseval regularization (start)
                 # ------------------------------------
-                elif args.algorithm == "parseval":
-                    loss = loss + args.parseval_reg * (64 / args.net_width)**2 * agent.parseval_reg_network(args.agent.actor.named_parameters())
-                    loss = loss + args.parseval_reg * (64 / args.net_width)**2 * agent.parseval_reg_network(args.agent.critic.named_parameters())
+                if args.algorithm == "parseval":
+                    loss = loss + args.parseval_reg * (64 / args.net_width)**2 * agent.parseval_reg_network(agent.actor.named_parameters())
+                    loss = loss + args.parseval_reg * (64 / args.net_width)**2 * agent.parseval_reg_network(agent.critic.named_parameters())
                 # ------------------------------------
                 #  Parseval regularization (end)
                 # ------------------------------------
@@ -317,48 +387,6 @@ if __name__ == "__main__":
         writer.add_scalar("losses/clipfrac", np.mean(clipfracs), global_step)
         writer.add_scalar("losses/explained_variance", explained_var, global_step)
         writer.add_scalar("charts/SPS", int(global_step / (time.time() - start_time)), global_step)
-
-        if iteration % args.eval_steps == 0:
-            print("Evaluating per task...")
-
-            task_returns = []
-            task_success = []
-            forgetting_scores = []
-
-            for task_id in range(4):
-                mean_return, success_rate = evaluate_agent(
-                    agent, make_env, args, device,
-                    success_threshold=success_threshold,
-                    task_manager=task_manager, task_id=task_id,
-                    eval_episodes=args.eval_episodes
-                )
-
-                writer.add_scalar(f"eval/task_{task_id}/mean_return", mean_return, global_step)
-                writer.add_scalar(f"eval/task_{task_id}/success_rate", success_rate, global_step)
-
-                task_returns.append(mean_return)
-                task_success.append(success_rate)
-
-                # 1. Save best historical performance
-                best_task_performance[task_id] = max(best_task_performance[task_id], mean_return)
-
-                # 2. Compute forgetting: best - current
-                forgetting = best_task_performance[task_id] - mean_return
-                forgetting_scores.append(forgetting)
-
-                writer.add_scalar(f"eval/task_{task_id}/forgetting", forgetting, global_step)
-
-            # log average performance across tasks
-            writer.add_scalar("eval/avg_mean_return", np.mean(task_returns), global_step)
-            writer.add_scalar("eval/avg_success_rate", np.mean(task_success), global_step)
-            writer.add_scalar("eval/avg_forgetting", np.mean(forgetting_scores), global_step)
-
-            # calculate convergence speed
-            if convergence_episode is None and np.mean(task_returns) >= args.target_return:
-                convergence_episode = episode_count
-                writer.add_scalar("eval/convergence_episode", convergence_episode, global_step)
-                print(f"[CONVERGED] at episode {convergence_episode}")
-
         writer.add_scalar("charts/task_id", current_task, global_step)
             
     envs.close()
