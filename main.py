@@ -176,7 +176,7 @@ if __name__ == "__main__":
     # additional variables
     episode_count = 0
     convergence_episode = None
-    best_task_performance = {0: -np.inf, 1: -np.inf, 2: -np.inf, 3: -np.inf}
+    best_task_performance = {t: -np.inf for t in range(args.num_tasks)}
     performance_matrix = np.zeros((args.num_tasks, args.num_tasks))
     task_stable_hits = {t: 0 for t in range(args.num_tasks)}
 
@@ -185,6 +185,7 @@ if __name__ == "__main__":
     task_manager.set_task(current_task)
     writer.add_scalar("charts/task_id", current_task, global_step)
     best_per_task = {t: -np.inf for t in range(args.num_tasks)}
+    task_seen = [False] * args.num_tasks
 
     if args.env_id == "CartPole-v1":
         success_threshold = 500
@@ -213,6 +214,9 @@ if __name__ == "__main__":
             next_done = np.logical_or(terminations, truncations)
             rewards[step] = torch.tensor(reward).to(device).view(-1)
             next_obs, next_done = torch.Tensor(next_obs).to(device), torch.Tensor(next_done).to(device)
+
+            current_cycle = episode_count // args.task_switch_episode_interval
+            task_seen[current_task] = True
 
             if "final_info" in infos:
                 for info in infos["final_info"]:
@@ -256,8 +260,13 @@ if __name__ == "__main__":
                                 # Update best performance
                                 best_per_task[task_id] = max(best_per_task[task_id], mean_return)
 
-                                # Compute forgetting
-                                forgetting = best_per_task[task_id] - mean_return
+                                # compute forgetting only if:
+                                # (1) the task has been seen before
+                                # (2) we are evaluating after first cycle (episode ≥ full cycle)
+                                if task_seen[task_id] and current_cycle > 0:
+                                    forgetting = best_per_task[task_id] - mean_return
+                                else:
+                                    forgetting = 0.0  # undefined in CL; treat as zero   
                                 writer.add_scalar(f"eval/task_{task_id}/forgetting", forgetting, episode_count)
                                 forgetting_scores.append(forgetting)
 
