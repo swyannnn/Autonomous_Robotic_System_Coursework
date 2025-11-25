@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from eval import evaluate_agent
 from utils import make_env
 from tasks import TaskManager
-from agent import BaseAgent, ParsevalAgent
+from agent import BasePPOAgent, ParsevalPPOAgent
 import gymnasium as gym
 import numpy as np
 import torch
@@ -137,9 +137,9 @@ if __name__ == "__main__":
     assert isinstance(envs.single_action_space, gym.spaces.Discrete), "only discrete action space is supported"
 
     if args.algorithm == "base":
-        agent = BaseAgent(envs).to(device)
+        agent = BasePPOAgent(envs).to(device)
     elif args.algorithm == "parseval":
-        agent = ParsevalAgent(envs, lambda_parseval=args.parseval_reg).to(device)
+        agent = ParsevalPPOAgent(envs, lambda_parseval=args.parseval_reg).to(device)
     task_manager = TaskManager(envs)
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
