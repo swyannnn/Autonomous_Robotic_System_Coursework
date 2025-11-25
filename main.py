@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from eval import evaluate_agent
 from utils import make_env
 from tasks import TaskManager
-from agent import Agent
+from agent import BaseAgent, ParsevalAgent
 import gymnasium as gym
 import numpy as np
 import torch
@@ -71,6 +71,14 @@ class Args:
     target_kl: float = None
     """the target KL divergence threshold"""
 
+    # PPO specific arguments computed
+    algorithm: str = "base"
+    """the type of PPO algorithm: base, parseval"""
+    parseval_reg: float = 0.0001
+    """the Parseval regularization strength (should try both 0.001 & 0.0001)"""
+    net_width: int = 64
+    """Width of the network layers"""
+
     # to be filled in runtime
     batch_size: int = 0
     """the batch size (computed in runtime)"""
@@ -128,7 +136,10 @@ if __name__ == "__main__":
     )
     assert isinstance(envs.single_action_space, gym.spaces.Discrete), "only discrete action space is supported"
 
-    agent = Agent(envs).to(device)
+    if args.algorithm == "base":
+        agent = BaseAgent(envs).to(device)
+    elif args.algorithm == "parseval":
+        agent = ParsevalAgent(envs, lambda_parseval=args.parseval_reg).to(device)
     task_manager = TaskManager(envs)
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
@@ -199,6 +210,9 @@ if __name__ == "__main__":
                             task_manager.set_task(current_task)
             writer.add_scalar("charts/task_id_episode", current_task, episode_count)
 
+        # ------------------------------------
+        # _update_parameters (start)
+        # ------------------------------------
         # bootstrap value if not done
         with torch.no_grad():
             next_value = agent.get_value(next_obs).reshape(1, -1)
@@ -267,8 +281,18 @@ if __name__ == "__main__":
                     v_loss = 0.5 * ((newvalue - b_returns[mb_inds]) ** 2).mean()
 
                 entropy_loss = entropy.mean()
-                loss = pg_loss - args.ent_coef * entropy_loss + v_loss * args.vf_coef
+                if args.algorithm == "base":
+                    loss = pg_loss - args.ent_coef * entropy_loss + v_loss * args.vf_coef
 
+                # ------------------------------------
+                #  Parseval regularization (start)
+                # ------------------------------------
+                elif args.algorithm == "parseval":
+                    loss = loss + args.parseval_reg * (64 / args.net_width)**2 * agent.parseval_reg_network(args.agent.actor.named_parameters())
+                    loss = loss + args.parseval_reg * (64 / args.net_width)**2 * agent.parseval_reg_network(args.agent.critic.named_parameters())
+                # ------------------------------------
+                #  Parseval regularization (end)
+                # ------------------------------------
                 optimizer.zero_grad()
                 loss.backward()
                 nn.utils.clip_grad_norm_(agent.parameters(), args.max_grad_norm)
@@ -276,7 +300,9 @@ if __name__ == "__main__":
 
             if args.target_kl is not None and approx_kl > args.target_kl:
                 break
-
+        # ------------------------------------
+        # _update_parameters (end)
+        # ------------------------------------
         y_pred, y_true = b_values.cpu().numpy(), b_returns.cpu().numpy()
         var_y = np.var(y_true)
         explained_var = np.nan if var_y == 0 else 1 - np.var(y_true - y_pred) / var_y
