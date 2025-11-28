@@ -40,7 +40,7 @@ class Args:
     """the id of the environment"""
     total_timesteps: int = 5000000
     """total timesteps of the experiments"""
-    learning_rate: float = 2.5e-4
+    learning_rate: float = 1.25e-4
     """the learning rate of the optimizer"""
     num_envs: int = 1
     """the number of parallel game environments"""
@@ -229,9 +229,13 @@ if __name__ == "__main__":
                 if episode_count % args.task_switch_episode_interval == 0:
                     prev_task = current_task
                     current_task = (current_task + 1) % args.num_tasks
-                    next_obs = torch.tensor(next_obs).to(device)
-                    next_done = torch.zeros(args.num_envs).to(device)
+
+                    # Apply new physics
                     task_manager.set_task(current_task)
+
+                    # Reset environment state
+                    env.reset()
+
                     print(f"---- SWITCH TO TASK {current_task + 1} ----")
                     writer.add_scalar("charts/masspole", env.unwrapped.masspole, episode_count)
                     writer.add_scalar("charts/force_mag", env.unwrapped.force_mag, episode_count)

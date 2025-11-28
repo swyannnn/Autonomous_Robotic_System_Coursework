@@ -16,10 +16,10 @@ class TaskManager:
         - or a vectorized SyncVectorEnv (envs.envs)
         """
         self.tasks = [
-            {"masspole": 0.1, "force_mag": 30.0},   # T1
-            {"masspole": 0.1, "force_mag": 10.0},  # T2
-            {"masspole": 1.0, "force_mag": 30.0},   # T3
-            {"masspole": 1.0, "force_mag": 10.0},  # T4
+            {"masspole": 1.0, "force_mag": 10.0},   # T1
+            {"masspole": 1.0, "force_mag": 13.0},  # T2
+            {"masspole": 0.7, "force_mag": 10.0},   # T3
+            {"masspole": 0.7, "force_mag": 13.0},  # T4
         ]
         self.env = env
         # self.raw_env = env.unwrapped
@@ -30,7 +30,6 @@ class TaskManager:
         params = self.tasks[task_index]
 
         set_task_parameters(self.env, params["masspole"], params["force_mag"])
-        self.env.reset()
         print(f"[TaskManager] Switched to Task {task_index + 1}: {params}")
 
     def apply_params(self, raw_env, params):
