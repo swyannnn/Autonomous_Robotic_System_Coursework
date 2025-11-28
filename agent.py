@@ -76,11 +76,7 @@ class ParsevalPPOAgent(nn.Module):
                  input_scale=1, learnable_input_scale=False):
         super().__init__()
 
-        # TODO: check how many envs are created
-        # The paper expects a 1-env Gym
-        # CleanRL uses vectorized envs → we must extract its single env space
-        self.env = envs.envs[0]       # unwrap vector env
-
+        self.env = envs
         self.net_width = net_width
         num_hidden = self.net_width
         self.add_diag_layer = add_diag_layer
@@ -97,7 +93,7 @@ class ParsevalPPOAgent(nn.Module):
             self.discrete_action_space = True
         else:
             self.discrete_action_space = False
-
+        
         # Build network exactly as in paper
         self.build_network(num_hidden, self.add_diag_layer, 
                             self.activation, self.init_gain, self.input_scale,
@@ -132,7 +128,7 @@ class ParsevalPPOAgent(nn.Module):
         probs = Categorical(logits=logits)
         if action is None:
             action = probs.sample()    #.squeeze()  # not using vector env
-
+        action = action.squeeze(-1)
         return action, probs.log_prob(action), probs.entropy(), self.critic(x)
 
     def build_network(self, num_hidden, add_diag_layer, activation, init_gain, 
