@@ -17,13 +17,11 @@ class TaskManager:
         """
         self.tasks = [
             {"masspole": 1.0, "force_mag": 10.0},   # T1
-            {"masspole": 1.0, "force_mag": 13.0},  # T2
-            {"masspole": 0.7, "force_mag": 10.0},   # T3
-            {"masspole": 0.7, "force_mag": 13.0},  # T4
+            {"masspole": 1.0, "force_mag": 31.0},  # T2
+            {"masspole": 7.0, "force_mag": 10.0},   # T3
+            {"masspole": 7.0, "force_mag": 31.0},  # T4
         ]
         self.env = env
-        # self.raw_env = env.unwrapped
-
 
     def set_task(self, task_index: int):
         """Apply selected task to all envs or single env."""
