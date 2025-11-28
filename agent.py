@@ -18,7 +18,7 @@ class BasePPOAgent(nn.Module):
         self.env = envs       # unwrap vector env
         self.build_network()
 
-        self.space = envs.single_action_space
+        self.space = envs.action_space
         if isinstance(self.space, spaces.Discrete):
             self.discrete_action_space = True
         elif isinstance(self.space, spaces.MultiDiscrete) and len(self.space.nvec) == 1:
@@ -56,18 +56,18 @@ class BasePPOAgent(nn.Module):
 
     def build_network(self):
         self.critic = nn.Sequential(
-            layer_init(nn.Linear(np.array(self.env.single_observation_space.shape).prod(), 64)),
+            layer_init(nn.Linear(np.array(self.env.observation_space.shape).prod(), 64)),
             nn.Tanh(),
             layer_init(nn.Linear(64, 64)),
             nn.Tanh(),
             layer_init(nn.Linear(64, 1), std=1.0),
         )
         self.actor = nn.Sequential(
-            layer_init(nn.Linear(np.array(self.env.single_observation_space.shape).prod(), 64)),
+            layer_init(nn.Linear(np.array(self.env.observation_space.shape).prod(), 64)),
             nn.Tanh(),
             layer_init(nn.Linear(64, 64)),
             nn.Tanh(),
-            layer_init(nn.Linear(64, self.env.single_action_space.n), std=0.01),
+            layer_init(nn.Linear(64, self.env.action_space.n), std=0.01),
         )
     
 class ParsevalPPOAgent(nn.Module):
@@ -90,7 +90,7 @@ class ParsevalPPOAgent(nn.Module):
         self.input_scale = input_scale
         self.learnable_input_scale = learnable_input_scale
 
-        self.space = envs.single_action_space
+        self.space = envs.action_space
         if isinstance(self.space, spaces.Discrete):
             self.discrete_action_space = True
         elif isinstance(self.space, spaces.MultiDiscrete) and len(self.space.nvec) == 1:

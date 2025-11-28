@@ -142,23 +142,23 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() and args.cuda else "cpu")
 
     # env setup
-    envs = make_env(args.env_id, args.capture_video, run_name)
-    assert isinstance(envs.single_action_space, gym.spaces.Discrete), "only discrete action space is supported"
+    env = make_env(args.env_id, args.capture_video, run_name)()
+    assert isinstance(env.action_space, gym.spaces.Discrete)
 
     if args.algorithm == "base":
-        agent = BasePPOAgent(envs).to(device)
+        agent = BasePPOAgent(env).to(device)
     elif args.algorithm == "parseval":
-        agent = ParsevalPPOAgent(envs, net_width=args.net_width,
+        agent = ParsevalPPOAgent(env, net_width=args.net_width,
                                 add_diag_layer=args.add_diag_layer,
                                 activation=args.activation,
                                 input_scale=args.input_scale,
                                 learnable_input_scale=args.learnable_input_scale).to(device)
-    task_manager = TaskManager(envs)
+    task_manager = TaskManager(env)
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
     # ALGO Logic: Storage setup
-    obs = torch.zeros((args.num_steps, args.num_envs) + envs.single_observation_space.shape).to(device)
-    actions = torch.zeros((args.num_steps, args.num_envs) + envs.single_action_space.shape).to(device)
+    obs = torch.zeros((args.num_steps, args.num_envs) + env.observation_space.shape).to(device)
+    actions = torch.zeros((args.num_steps, args.num_envs) + env.action_space.shape).to(device)
     logprobs = torch.zeros((args.num_steps, args.num_envs)).to(device)
     rewards = torch.zeros((args.num_steps, args.num_envs)).to(device)
     dones = torch.zeros((args.num_steps, args.num_envs)).to(device)
@@ -167,9 +167,9 @@ if __name__ == "__main__":
     # TRY NOT TO MODIFY: start the game
     global_step = 0
     start_time = time.time()
-    next_obs, _ = envs.reset(seed=args.seed)
-    next_obs = torch.Tensor(next_obs).to(device)
-    next_done = torch.zeros(args.num_envs).to(device)
+    next_obs, _ = env.reset(seed=args.seed)
+    next_obs = torch.tensor(next_obs, dtype=torch.float32).to(device)
+    next_done = torch.tensor([0.0]).to(device)     # shape = (1,)
 
     # additional variables
     episode_count = 0
@@ -208,87 +208,89 @@ if __name__ == "__main__":
             logprobs[step] = logprob
 
             # TRY NOT TO MODIFY: execute the game and log data.
-            next_obs, reward, terminations, truncations, infos = envs.step(action.cpu().numpy())
-            next_done = np.logical_or(terminations, truncations)
+            next_obs, reward, terminations, truncations, info = env.step(action.cpu().numpy())
+            next_done = np.array([np.logical_or(terminations, truncations)])
+            if next_done:
+                next_obs, _ = env.reset()
             rewards[step] = torch.tensor(reward).to(device).view(-1)
-            next_obs, next_done = torch.Tensor(next_obs).to(device), torch.Tensor(next_done).to(device)
+            next_obs = torch.tensor(next_obs, dtype=torch.float32).to(device)
+            next_done = torch.tensor([float(next_done)], device=device)
 
             current_cycle = episode_count // args.task_switch_episode_interval
             task_seen[current_task] = True
 
-            if "final_info" in infos:
-                for info in infos["final_info"]:
-                    if info and "episode" in info:
-                        episode_count += 1
-                        print(f"global_step={global_step}, episodic_return={info['episode']['r']}")
-                        writer.add_scalar("charts/episodic_return", info["episode"]["r"], episode_count)
-                        writer.add_scalar("charts/episodic_length", info["episode"]["l"], episode_count)
-                        writer.add_scalar("charts/global_step_return", info["episode"]["r"], global_step)
+            if info and "episode" in info:
+                episode_count += 1
+                print(f"global_step={global_step}, episodic_return={info['episode']['r']}")
+                writer.add_scalar("charts/episodic_return", info["episode"]["r"], episode_count)
+                writer.add_scalar("charts/episodic_length", info["episode"]["l"], episode_count)
+                writer.add_scalar("charts/global_step_return", info["episode"]["r"], global_step)
+                
+                if episode_count % args.task_switch_episode_interval == 0:
+                    prev_task = current_task
+                    current_task = (current_task + 1) % args.num_tasks
+                    next_obs = torch.tensor(next_obs).to(device)
+                    next_done = torch.zeros(args.num_envs).to(device)
+                    task_manager.set_task(current_task)
+                    print(f"---- SWITCH TO TASK {current_task + 1} ----")
+                    writer.add_scalar("charts/masspole", env.unwrapped.masspole, episode_count)
+                    writer.add_scalar("charts/force_mag", env.unwrapped.force_mag, episode_count)
+
+                    # # ==================================
+                    # # 2. RUN EVALUATION ON *ALL* TASKS
+                    # # ==================================
+                    # print("Evaluating on all tasks...")
+                    # task_returns = []
+                    # task_success = []
+                    # forgetting_scores = []
+                    # for task_id in range(args.num_tasks):
+                    #     print(f"Evaluating on Task {task_id + 1}...")
+                    #     mean_return, success_rate = evaluate_agent(
+                    #         agent, make_env, args, device,
+                    #         success_threshold=success_threshold,
+                    #         task_manager=task_manager,
+                    #         task_id=task_id,
+                    #         eval_episodes=args.eval_episodes
+                    #     )
+
+                    #     # Log results
+                    #     writer.add_scalar(f"eval/task_{task_id}/mean_return", mean_return, episode_count)
+                    #     writer.add_scalar(f"eval/task_{task_id}/success_rate", success_rate, episode_count)
+                    #     task_returns.append(mean_return)
+                    #     task_success.append(success_rate)
+
+                    #     # Update performance matrix
+                    #     performance_matrix[task_id][prev_task] = mean_return
+
+                    #     # Update best performance
+                    #     best_per_task[task_id] = max(best_per_task[task_id], mean_return)
+
+                    #     # compute forgetting only if:
+                    #     # (1) the task has been seen before
+                    #     # (2) we are evaluating after first cycle (episode ≥ full cycle)
+                    #     if task_seen[task_id] and current_cycle > 0:
+                    #         forgetting = best_per_task[task_id] - mean_return
+                    #     else:
+                    #         forgetting = 0.0  # undefined in CL; treat as zero   
+                    #     writer.add_scalar(f"eval/task_{task_id}/forgetting", forgetting, episode_count)
+                    #     forgetting_scores.append(forgetting)
+
+                    #     # ---- per-task convergence tracking ----
+                    #     if success_rate == 1.0:
+                    #         task_stable_hits[task_id] += 1
+                    #     else:
+                    #         task_stable_hits[task_id] = 0   # reset streak
                         
-                        if episode_count % args.task_switch_episode_interval == 0:
-                            prev_task = current_task
-                            current_task = (current_task + 1) % args.num_tasks
-                            next_obs, _ = envs.reset()
-                            next_obs = torch.tensor(next_obs).to(device)
-                            next_done = torch.zeros(args.num_envs).to(device)
-                            task_manager.set_task(current_task)
-                            print(f"---- SWITCH TO TASK {current_task + 1} ----")
-
-                            # ==================================
-                            # 2. RUN EVALUATION ON *ALL* TASKS
-                            # ==================================
-                            print("Evaluating on all tasks...")
-                            task_returns = []
-                            task_success = []
-                            forgetting_scores = []
-                            for task_id in range(args.num_tasks):
-                                print(f"Evaluating on Task {task_id + 1}...")
-                                mean_return, success_rate = evaluate_agent(
-                                    agent, make_env, args, device,
-                                    success_threshold=success_threshold,
-                                    task_manager=task_manager,
-                                    task_id=task_id,
-                                    eval_episodes=args.eval_episodes
-                                )
-
-                                # Log results
-                                writer.add_scalar(f"eval/task_{task_id}/mean_return", mean_return, episode_count)
-                                writer.add_scalar(f"eval/task_{task_id}/success_rate", success_rate, episode_count)
-                                task_returns.append(mean_return)
-                                task_success.append(success_rate)
-
-                                # Update performance matrix
-                                performance_matrix[task_id][prev_task] = mean_return
-
-                                # Update best performance
-                                best_per_task[task_id] = max(best_per_task[task_id], mean_return)
-
-                                # compute forgetting only if:
-                                # (1) the task has been seen before
-                                # (2) we are evaluating after first cycle (episode ≥ full cycle)
-                                if task_seen[task_id] and current_cycle > 0:
-                                    forgetting = best_per_task[task_id] - mean_return
-                                else:
-                                    forgetting = 0.0  # undefined in CL; treat as zero   
-                                writer.add_scalar(f"eval/task_{task_id}/forgetting", forgetting, episode_count)
-                                forgetting_scores.append(forgetting)
-
-                                # ---- per-task convergence tracking ----
-                                if success_rate == 1.0:
-                                    task_stable_hits[task_id] += 1
-                                else:
-                                    task_stable_hits[task_id] = 0   # reset streak
-                                
-                                # check if all tasks have converged
-                                if all([task_stable_hits[t] >= args.stable_hits_required for t in range(args.num_tasks)]):
-                                    if convergence_episode is None:
-                                        convergence_episode = episode_count
-                                        writer.add_scalar("eval/convergence_episode", convergence_episode, episode_count)
-                                        writer.add_text("eval/convergence_info", f"Converged at episode {convergence_episode}", episode_count)
-                                        print(f"[CONVERGED] at episode {convergence_episode}")
-                            writer.add_scalar("eval/avg_mean_return", np.mean(task_returns), episode_count)
-                            writer.add_scalar("eval/avg_success_rate", np.mean(task_success), episode_count)
-                            writer.add_scalar("eval/avg_forgetting", np.mean(forgetting_scores), episode_count)
+                    #     # check if all tasks have converged
+                    #     if all([task_stable_hits[t] >= args.stable_hits_required for t in range(args.num_tasks)]):
+                    #         if convergence_episode is None:
+                    #             convergence_episode = episode_count
+                    #             writer.add_scalar("eval/convergence_episode", convergence_episode, episode_count)
+                    #             writer.add_text("eval/convergence_info", f"Converged at episode {convergence_episode}", episode_count)
+                    #             print(f"[CONVERGED] at episode {convergence_episode}")
+                    # writer.add_scalar("eval/avg_mean_return", np.mean(task_returns), episode_count)
+                    # writer.add_scalar("eval/avg_success_rate", np.mean(task_success), episode_count)
+                    # writer.add_scalar("eval/avg_forgetting", np.mean(forgetting_scores), episode_count)
 
         writer.add_scalar("charts/task_id_episode", current_task, episode_count)
 
@@ -312,9 +314,9 @@ if __name__ == "__main__":
             returns = advantages + values
 
         # flatten the batch
-        b_obs = obs.reshape((-1,) + envs.single_observation_space.shape)
+        b_obs = obs.reshape((-1,) + env.observation_space.shape)
         b_logprobs = logprobs.reshape(-1)
-        b_actions = actions.reshape((-1,) + envs.single_action_space.shape)
+        b_actions = actions.reshape((-1,) + env.action_space.shape)
         b_advantages = advantages.reshape(-1)
         b_returns = returns.reshape(-1)
         b_values = values.reshape(-1)
@@ -400,5 +402,5 @@ if __name__ == "__main__":
         writer.add_scalar("charts/SPS", int(global_step / (time.time() - start_time)), global_step)
         writer.add_scalar("charts/task_id", current_task, global_step)
             
-    envs.close()
+    env.close()
     writer.close()

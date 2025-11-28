@@ -12,12 +12,11 @@ def evaluate_agent(agent, make_env, args, device, success_threshold=500, task_ma
         success_rate: float (0.0 to 1.0)
     """
     # Create separate eval environment (num_envs = 1)
-    eval_env = make_env(args.env_id, 0, False, f"{args.exp_name}_eval")()
+    eval_env = make_env(args.env_id, False, f"{args.exp_name}_eval")()
 
     if task_manager is not None and task_id is not None:
         params = task_manager.tasks[task_id]
-        raw_env = eval_env.unwrapped   # <-- safest & official access
-        task_manager.apply_params(raw_env, params)
+        task_manager.apply_params(eval_env, params)
 
     agent.eval()
 
