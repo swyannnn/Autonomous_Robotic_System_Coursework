@@ -142,9 +142,7 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() and args.cuda else "cpu")
 
     # env setup
-    envs = gym.vector.SyncVectorEnv(
-        [make_env(args.env_id, i, args.capture_video, run_name) for i in range(args.num_envs)],
-    )
+    envs = make_env(args.env_id, args.capture_video, run_name)
     assert isinstance(envs.single_action_space, gym.spaces.Discrete), "only discrete action space is supported"
 
     if args.algorithm == "base":
@@ -230,16 +228,21 @@ if __name__ == "__main__":
                         if episode_count % args.task_switch_episode_interval == 0:
                             prev_task = current_task
                             current_task = (current_task + 1) % args.num_tasks
+                            next_obs, _ = envs.reset()
+                            next_obs = torch.tensor(next_obs).to(device)
+                            next_done = torch.zeros(args.num_envs).to(device)
                             task_manager.set_task(current_task)
                             print(f"---- SWITCH TO TASK {current_task + 1} ----")
 
                             # ==================================
                             # 2. RUN EVALUATION ON *ALL* TASKS
                             # ==================================
+                            print("Evaluating on all tasks...")
                             task_returns = []
                             task_success = []
                             forgetting_scores = []
                             for task_id in range(args.num_tasks):
+                                print(f"Evaluating on Task {task_id + 1}...")
                                 mean_return, success_rate = evaluate_agent(
                                     agent, make_env, args, device,
                                     success_threshold=success_threshold,
@@ -287,8 +290,7 @@ if __name__ == "__main__":
                             writer.add_scalar("eval/avg_success_rate", np.mean(task_success), episode_count)
                             writer.add_scalar("eval/avg_forgetting", np.mean(forgetting_scores), episode_count)
 
-
-            writer.add_scalar("charts/task_id_episode", current_task, episode_count)
+        writer.add_scalar("charts/task_id_episode", current_task, episode_count)
 
         # ------------------------------------
         # _update_parameters (start)

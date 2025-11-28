@@ -12,19 +12,16 @@ def evaluate_agent(agent, make_env, args, device, success_threshold=500, task_ma
         success_rate: float (0.0 to 1.0)
     """
     # Create separate eval environment (num_envs = 1)
-    eval_envs = gym.vector.SyncVectorEnv(
-        [make_env(args.env_id, 0, False, f"{args.exp_name}_eval")]
-    )
+    eval_env = make_env(args.env_id, 0, False, f"{args.exp_name}_eval")()
 
-    # unwrap and apply selected task parameters
     if task_manager is not None and task_id is not None:
-        raw_env = task_manager.unwrap_single(eval_envs.envs[0]) 
         params = task_manager.tasks[task_id]
+        raw_env = eval_env.unwrapped   # <-- safest & official access
         task_manager.apply_params(raw_env, params)
 
     agent.eval()
 
-    obs, _ = eval_envs.reset()
+    obs, _ = eval_env.reset()
     obs = torch.tensor(obs, dtype=torch.float32, device=device)
 
     episodic_returns = []
@@ -34,26 +31,25 @@ def evaluate_agent(agent, make_env, args, device, success_threshold=500, task_ma
         with torch.no_grad():
             actions, _, _, _ = agent.get_action_and_value(obs)
 
-        next_obs, _, _, _, infos = eval_envs.step(actions.cpu().numpy())
+        next_obs, reward, terminated, truncated, info = eval_env.step(actions.cpu().numpy())
 
-        if "final_info" in infos:
-            for info in infos["final_info"]:
-                if info is None:
-                    continue
-                if "episode" not in info:
-                    continue
+        done = terminated or truncated
 
-                # record return
+        if done:
+            # Gymnasium puts episode info directly in info dict
+            if "episode" in info:
                 episodic_returns.append(info["episode"]["r"])
+                length = info["episode"]["l"]
 
-                # detect success (CartPole-specific: length >= 500)
-                length = int(info["episode"]["l"])
                 if length >= success_threshold:
                     successes += 1
 
+            # must reset immediately
+            next_obs, _ = eval_env.reset()
+
         obs = torch.tensor(next_obs, dtype=torch.float32, device=device)
 
-    eval_envs.close()
+    eval_env.close()
     agent.train()
 
     mean_return = float(np.mean(episodic_returns))

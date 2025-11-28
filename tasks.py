@@ -1,13 +1,3 @@
-# tasks.py
-import gymnasium as gym
-
-def get_cartpole_base_env(env):
-    """Unwrap all layers and return the raw CartPoleEnv."""
-    e = env
-    while hasattr(e, "env"):
-        e = e.env
-    return e  # must be CartPoleEnv
-
 def set_task_parameters(cart, masspole, force_mag):
     """Apply physics modifications to CartPole."""
     # Set mass of pole
@@ -18,17 +8,14 @@ def set_task_parameters(cart, masspole, force_mag):
     cart.total_mass = cart.masspole + cart.masscart
     cart.polemass_length = cart.masspole * cart.length
 
+
 class TaskManager:
-    def __init__(self, envs):
+    def __init__(self, env_or_envs):
         """
-        envs is your SyncVectorEnv
+        Accepts either:
+        - a single gym.Env
+        - or a vectorized SyncVectorEnv (envs.envs)
         """
-        self.envs = envs
-
-        # List of raw environments
-        self.raw_envs = [get_cartpole_base_env(env) for env in envs.envs]
-
-        # Define 4 tasks
         self.tasks = [
             {"masspole": 0.05, "force_mag": 5.0},   # T1
             {"masspole": 0.05, "force_mag": 15.0},  # T2
@@ -36,23 +23,28 @@ class TaskManager:
             {"masspole": 0.20, "force_mag": 15.0},  # T4
         ]
 
+        # Vectorized env mode
+        if hasattr(env_or_envs, "envs"):
+            self.vector_env = True
+            self.envs = env_or_envs
+            # Proper unwrapping
+            self.raw_envs = [e.unwrapped for e in env_or_envs.envs]
+
+        # Single-env mode
+        else:
+            self.vector_env = False
+            self.env = env_or_envs
+            self.raw_env = env_or_envs.unwrapped
+
+
     def set_task(self, task_index: int):
-        """Apply the selected task to all environments."""
+        """Apply selected task to all envs or single env."""
         params = self.tasks[task_index]
-        for cart in self.raw_envs:
-            set_task_parameters(cart, params["masspole"], params["force_mag"])
-        print(f"[TaskManager] Switched to Task {task_index+1}: {params}")
 
-    def unwrap_single(self, env):
-        """Fully unwrap a single env from wrappers."""
-        e = env
-        while hasattr(e, "env"):
-            e = e.env
-        return e
+        set_task_parameters(self.raw_env, params["masspole"], params["force_mag"])
+        print(f"[TaskManager] Switched to Task {task_index + 1}: {params}")
 
-    def apply_params(self, env, params):
-        """Apply params to one raw env."""
-        env.masspole = params["masspole"]
-        env.force_mag = params["force_mag"]
-        env.total_mass = env.masspole + env.masscart
-        env.polemass_length = env.masspole * env.length
+
+    def apply_params(self, raw_env, params):
+        """Apply task parameters to a given raw env (used in evaluation)."""
+        set_task_parameters(raw_env, params["masspole"], params["force_mag"])

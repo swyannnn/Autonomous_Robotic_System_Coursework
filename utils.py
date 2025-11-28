@@ -5,9 +5,9 @@ import torch.nn as nn
 import torch
 import numpy as np
 
-def make_env(env_id, idx, capture_video, run_name):
+def make_env(env_id, capture_video, run_name):
     def thunk():
-        if capture_video and idx == 0:
+        if capture_video:
             env = gym.make(env_id, render_mode="rgb_array")
             env = gym.wrappers.RecordVideo(env, f"videos/{run_name}")
         else:
