@@ -295,7 +295,10 @@ if __name__ == "__main__":
                             # Now update best_per_task AFTER forgetting calculation
                             # ---------------------------
                             best_per_task[task_id] = max(best_per_task[task_id], mean_return)
-
+                            import json
+                            save_path = f"runs/{run_name}/best_per_task.json"
+                            with open(save_path, "w") as f:
+                                json.dump(best_per_task, f, indent=4)
                             # ---------------------------
                             # Convergence tracking
                             # ---------------------------

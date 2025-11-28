@@ -5,39 +5,44 @@ from utils import make_env
 from tasks import TaskManager
 
 
-def evaluate_saved_model(
+import torch
+import numpy as np
+import json
+from agent import BasePPOAgent, ParsevalPPOAgent
+from utils import make_env
+from tasks import TaskManager
+
+
+def evaluate_model_all_tasks(
     model_path,
+    best_json_path,
     env_id="CartPole-v1",
     algorithm="base",
-    num_episodes=10,
+    num_tasks=4,
+    eval_episodes=10,
     device="cuda",
-    task_id=None,
+    success_threshold=500,
 ):
     """
-    Loads a saved PPO model and evaluates it.
-
-    Args:
-        model_path: path to the saved agent_final.pth
-        env_id: Gym environment id
-        algorithm: "base" or "parseval"
-        num_episodes: number of eval episodes
-        device: "cuda" or "cpu"
-        task_id: if using TaskManager, which task to set before evaluation
+    Loads a saved PPO model and evaluates it on ALL tasks.
+    Computes mean return, success rate, and forgetting.
     """
 
     # ------------------------------
-    # 1. Create environment
+    # Load best_per_task from training
+    # ------------------------------
+    with open(best_json_path, "r") as f:
+        best_per_task = json.load(f)
+
+    # Convert keys to int for safety
+    best_per_task = {int(k): float(v) for k, v in best_per_task.items()}
+
+    # ------------------------------
+    # Create environment + agent
     # ------------------------------
     env = make_env(env_id, capture_video=False, run_name="eval")()
     task_manager = TaskManager(env)
 
-    # Set specific task if requested
-    if task_id is not None:
-        task_manager.set_task(task_id)
-
-    # ------------------------------
-    # 2. Load agent architecture
-    # ------------------------------
     if algorithm == "base":
         agent = BasePPOAgent(env).to(device)
     else:
@@ -46,46 +51,92 @@ def evaluate_saved_model(
     agent.load_state_dict(torch.load(model_path, map_location=device))
     agent.eval()
 
-    # ------------------------------
-    # 3. Run evaluation
-    # ------------------------------
-    returns = []
+    # ==============================
+    #   Evaluate all tasks
+    # ==============================
 
-    for ep in range(num_episodes):
-        obs, _ = env.reset()
-        obs = torch.tensor(obs, dtype=torch.float32).to(device)
+    all_task_returns = {}
+    all_task_success = {}
+    forgetting_scores = {}
 
-        done = False
-        total_reward = 0
+    for task_id in range(num_tasks):
+        print(f"\n==============================")
+        print(f" Evaluating Task {task_id + 1}")
+        print(f"==============================")
 
-        while not done:
-            with torch.no_grad():
-                action, _, _, _ = agent.get_action_and_value(obs)
+        # Apply task physics
+        task_manager.set_task(task_id)
 
-            obs, reward, terminated, truncated, _ = env.step(action.cpu().numpy())
+        returns = []
+        successes = []
+
+        # Run several episodes
+        for ep in range(eval_episodes):
+            obs, _ = env.reset()
             obs = torch.tensor(obs, dtype=torch.float32).to(device)
 
-            done = terminated or truncated
-            total_reward += reward
+            total_reward = 0
+            done = False
 
-        returns.append(total_reward)
+            while not done:
+                with torch.no_grad():
+                    action, _, _, _ = agent.get_action_and_value(obs)
 
-        print(f"Episode {ep+1}: return = {total_reward}")
+                # convert tensor to int
+                action_int = int(action.item())
+
+                obs, reward, terminated, truncated, _ = env.step(action_int)
+                obs = torch.tensor(obs, dtype=torch.float32).to(device)
+
+                total_reward += reward
+                done = terminated or truncated
+
+            returns.append(total_reward)
+            successes.append(1 if total_reward >= success_threshold else 0)
+
+            print(f"Episode {ep+1}: return = {total_reward}")
+
+        mean_return = float(np.mean(returns))
+        success_rate = float(np.mean(successes))
+
+        all_task_returns[task_id] = mean_return
+        all_task_success[task_id] = success_rate
+
+        # -----------------------------------------
+        # Compute forgetting:
+        # F_t = best_per_task[t] - current_performance
+        # -----------------------------------------
+        prev_best = best_per_task.get(task_id, 0)
+        forgetting = max(prev_best - mean_return, 0.0)
+        forgetting_scores[task_id] = forgetting
+
+        print(f"Mean return:   {mean_return:.2f}")
+        print(f"Success rate:  {success_rate:.2f}")
+        print(f"Best ever:     {prev_best:.2f}")
+        print(f"Forgetting:    {forgetting:.2f}")
 
     env.close()
 
-    print("\n==========================")
-    print(f" Mean return over {num_episodes} episodes: {np.mean(returns):.2f}")
-    print("==========================")
+    # ==============================
+    # Summary
+    # ==============================
+    print("\n=====================================")
+    print(" FINAL EVALUATION SUMMARY")
+    print("=====================================")
+    print("Task → Mean Return   Success   Forgetting")
+    for t in range(num_tasks):
+        print(f"T{t+1}:   {all_task_returns[t]:7.2f}   {all_task_success[t]:.2f}      {forgetting_scores[t]:.2f}")
 
-    return np.mean(returns)
+    return all_task_returns, all_task_success, forgetting_scores
 
-
-
-evaluate_saved_model(
-    model_path = "/media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__base__1__1764338987/episode_900.pth",
+model_path = "/media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__base__1__1764343795/episode_900.pth"
+evaluate_model_all_tasks(
+    model_path = model_path,
+    best_json_path = "/media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__base__1__1764343795/best_per_task.json",
     env_id="CartPole-v1",
-    algorithm="base",
-    num_episodes=20,
-    task_id=3,    # if you want to test task 3 (0-based)
+    algorithm="base" if "base" in model_path else "parseval",
+    num_tasks=4,
+    eval_episodes=20,
+    device="cuda",
+    success_threshold=500,
 )
