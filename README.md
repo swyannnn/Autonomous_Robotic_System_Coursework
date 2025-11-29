@@ -7,3 +7,8 @@ how to calculate forget score
 https://arxiv.org/pdf/1706.08840
 
 {'min_action': -1.0, 'max_action': 1.0, 'min_position': -1.2, 'max_position': 0.6, 'max_speed': 0.07, 'goal_position': 0.45, 'goal_velocity': 0, 'power': 0.0015, 'low_state': array([-1.2 , -0.07], dtype=float32), 'high_state': array([0.6 , 0.07], dtype=float32), 'render_mode': None, 'screen_width': 600, 'screen_height': 400, 'screen': None, 'clock': None, 'isopen': True, 'action_space': Box(-1.0, 1.0, (1,), float32), 'observation_space': Box([-1.2  -0.07], [0.6  0.07], (2,), float32), 'spec': EnvSpec(id='MountainCarContinuous-v0', entry_point='gymnasium.envs.classic_control.continuous_mountain_car:Continuous_MountainCarEnv', reward_threshold=90.0, nondeterministic=False, max_episode_steps=None, order_enforce=False, autoreset=False, disable_env_checker=True, apply_api_compatibility=False, kwargs={}, namespace=None, name='MountainCarContinuous', version=0, additional_wrappers=(), vector_entry_point=None)}
+
+
+(Pdb) vars(env.unwrapped)
+{'max_speed': 8, 'max_torque': 2.0, 'dt': 0.05, 'g': 10.0, 'm': 1.0, 'l': 1.0, 
+'render_mode': None, 'screen_dim': 500, 'screen': None, 'clock': None, 'isopen': True, 'action_space': Box(-2.0, 2.0, (1,), float32), 'observation_space': Box([-1. -1. -8.], [1. 1. 8.], (3,), float32), 'spec': EnvSpec(id='Pendulum-v1', entry_point='gymnasium.envs.classic_control.pendulum:PendulumEnv', reward_threshold=None, nondeterministic=False, max_episode_steps=None, order_enforce=False, autoreset=False, disable_env_checker=True, apply_api_compatibility=False, kwargs={}, namespace=None, name='Pendulum', version=1, additional_wrappers=(), vector_entry_point=None)}

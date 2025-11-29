@@ -283,11 +283,11 @@ if __name__ == "__main__":
 
 # Example usage:
 # python plot_tb_scalars.py \
-#     --runs runs/CartPole-v1__parseval__* \
+#     --runs runs/Pendulum-v1__base__* \
 #     --tag charts/episodic_return \
-#     --output episodic_return_parseval1.png \
+#     --output episodic_return_base_pendulum.png \
 #     --interval 300 \
 #     --cycles 4 \
 #     --ma_window 51 \
-#     --title "CartPole-v1 (PPO Agent with Parseval Regularization)" \
+#     --title "Pendulum-v1 (PPO Agent with Base Algorithm)" \
 #     --compute_metrics 

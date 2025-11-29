@@ -5,13 +5,16 @@ import torch.nn as nn
 import torch
 import numpy as np
 
-def make_env(env_id, capture_video, run_name):
+def make_env(env_id, capture_video, run_name, max_episode_steps=None):
     def thunk():
         if capture_video:
             env = gym.make(env_id, render_mode="rgb_array")
             env = gym.wrappers.RecordVideo(env, f"videos/{run_name}")
         else:
             env = gym.make(env_id)
+
+        if max_episode_steps is not None:
+            env = gym.wrappers.TimeLimit(env.unwrapped, max_episode_steps=max_episode_steps)
         env = gym.wrappers.RecordEpisodeStatistics(env)
         return env
 

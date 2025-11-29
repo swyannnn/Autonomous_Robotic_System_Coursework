@@ -11,10 +11,6 @@ from utils import ScaleLayer, DiagLinear, layer_init, format_obs
 class BasePPOAgent(nn.Module):
     def __init__(self, envs):
         super().__init__()
-
-        # TODO: check how many envs are created
-        # The paper expects a 1-env Gym
-        # CleanRL uses vectorized envs → we must extract its single env space
         self.env = envs       # unwrap vector env
 
         self.space = envs.action_space
@@ -27,15 +23,13 @@ class BasePPOAgent(nn.Module):
 
         if self.discrete_action_space:  #  use the appropriate function to get actions
             self.get_action_and_value = self._get_action_and_value_discrete
-        else:
-            self.get_action_and_value = self._get_action_and_value_continuous
-
-        if self.discrete_action_space:
             self.actor_output_dim = self.space.n
         else:
+            self.get_action_and_value = self._get_action_and_value_continuous
+            self.rpo_alpha = 0.5  # RPO algorithm, specifically for continuous action space 
             self.actor_output_dim = np.prod(self.space.shape)
-            self.actor_logstd = nn.Parameter(torch.zeros(1, self.actor_output_dim))
-                    
+
+        self.actor_logstd = nn.Parameter(torch.zeros(1, self.actor_output_dim))
         self.build_network()
 
     def get_value(self, x):
@@ -51,7 +45,7 @@ class BasePPOAgent(nn.Module):
     
     def _get_action_and_value_continuous(self, x, action=None):
         x = torch.atleast_2d(x)
-
+        
         action_mean = self.actor(x)
         action_logstd = self.actor_logstd.expand_as(action_mean)
         action_std = torch.exp(action_logstd)
@@ -59,6 +53,11 @@ class BasePPOAgent(nn.Module):
         if action is None:
             action = probs.sample()
             action = action.squeeze(-1)
+        else:
+            # sample again to add stochasticity, for the policy update
+            z = torch.FloatTensor(action_mean.shape).uniform_(-self.rpo_alpha, self.rpo_alpha).to(action_mean.device)
+            action_mean = action_mean + z
+            probs = Normal(action_mean, action_std)
         return action, probs.log_prob(action).sum(1), probs.entropy().sum(1), self.critic(x)
 
     def build_network(self):
@@ -101,17 +100,15 @@ class ParsevalPPOAgent(nn.Module):
         else:
             self.discrete_action_space = False
 
-        # Determine output dimension
-        output_size = self.space.n if self.discrete_action_space else np.prod(self.space.shape)
-        self.actor_logstd = nn.Parameter(torch.zeros(1, output_size))
-    
         if self.discrete_action_space:  #  use the appropriate function to get actions
             self.get_action_and_value = self._get_action_and_value_discrete
+            self.actor_output_dim = self.space.n
         else:
             self.get_action_and_value = self._get_action_and_value_continuous
+            self.actor_output_dim = np.prod(self.space.shape)
+            self.rpo_alpha = 0.5  # RPO algorithm, specifically for continuous action space 
 
-        # Build network exactly as in paper
-        self.actor_output_dim = self.env.action_space.n if self.discrete_action_space else np.prod(self.env.action_space.shape)
+        self.actor_logstd = nn.Parameter(torch.zeros(1, self.actor_output_dim))
         self.build_network(num_hidden)
 
     def get_value(self, x):
@@ -126,7 +123,12 @@ class ParsevalPPOAgent(nn.Module):
         probs = Normal(action_mean, action_std)
         if action is None:
             action = probs.sample()
-            action = action.squeeze()
+            action = action.squeeze(-1)
+        else:
+            # sample again to add stochasticity, for the policy update
+            z = torch.FloatTensor(action_mean.shape).uniform_(-self.rpo_alpha, self.rpo_alpha).to(action_mean.device)
+            action_mean = action_mean + z
+            probs = Normal(action_mean, action_std)
         return action, probs.log_prob(action).sum(1), probs.entropy().sum(1), self.critic(x)
 
     def _get_action_and_value_discrete(self, x, action=None):

@@ -26,6 +26,17 @@ def set_task_mountaincar_parameters(env, params):
     env.unwrapped.goal_position = goal_position
     env.unwrapped.goal_velocity = goal_velocity
 
+def set_task_pendulum_parameters(env, params):
+    """Apply physics modifications to Pendulum."""
+    gravity = params["g"]
+    max_torque = params["max_torque"]
+    mass = params["m"]
+    length = params["l"]
+
+    env.unwrapped.max_torque = max_torque
+    env.unwrapped.m = mass
+    env.unwrapped.l = length
+    env.unwrapped.g = gravity
 
 class TaskManager:
     def __init__(self, env, task_config_file="task_config.yaml"):
@@ -37,8 +48,13 @@ class TaskManager:
         with open(task_config_file, "r") as f:
             self.tasks = yaml.safe_load(f)[env.spec.id]
         self.env = env
-        self.set_task_parameters = set_task_cartpole_parameters if "CartPole" in env.spec.id \
-                        else set_task_mountaincar_parameters
+
+        if env.spec.id == "CartPole-v1":
+            self.set_task_parameters = set_task_cartpole_parameters
+        elif env.spec.id == "MountainCarContinuous-v0":
+            self.set_task_parameters = set_task_mountaincar_parameters
+        elif env.spec.id == "Pendulum-v1":
+            self.set_task_parameters = set_task_pendulum_parameters
 
     def set_task(self, task_index: int):
         """Apply selected task to all envs or single env."""
@@ -54,5 +70,8 @@ class TaskManager:
     def log_task_params(self, logger, task_index: int, episode_count: int):
         """Log current task parameters."""
         params = self.tasks[task_index]
+        for param in params:
+            # get it from env.unwrapped to ensure we log the actual applied value
+            params[param] = getattr(self.env.unwrapped, param)
         for key, value in params.items():
             logger.add_scalar(f"task/{key}", value, episode_count)
