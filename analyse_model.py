@@ -129,10 +129,11 @@ def evaluate_model_all_tasks(
 
     return all_task_returns, all_task_success, forgetting_scores
 
-model_path = "/media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__base__1__1764343795/episode_900.pth"
+path = "/media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__1__1764343850/"
+model_path = path + "episode_2400.pth"
 evaluate_model_all_tasks(
     model_path = model_path,
-    best_json_path = "/media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__base__1__1764343795/best_per_task.json",
+    best_json_path = path + "best_per_task.json",
     env_id="CartPole-v1",
     algorithm="base" if "base" in model_path else "parseval",
     num_tasks=4,
