@@ -104,6 +104,8 @@ class Args:
     """number of stable hits to consider convergence"""
 
     # for task switching
+    tasl_config_file: str = "task_config.yaml"
+    """path to the task configuration file (YAML format)"""
     task_switch_episode_interval: int = 300
     """number of episodes between each task switch"""
     num_tasks: int = 4

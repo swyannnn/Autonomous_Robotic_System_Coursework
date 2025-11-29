@@ -1,2 +1,20 @@
-cartpole:
+CartPole-v1:
+  0:
+    gravity: 9.8
+    masspole: 0.1
+    force_mag: 10.0
+  1:
+    gravity: 19.6
+    masspole: 0.1
+    force_mag: 10.0
+  2:
+    gravity: 9.8
+    masspole: 3.0
+    force_mag: 7.0
+  3:
+    gravity: 9.8
+    masspole: 3.0
+    force_mag: 5.0
+
+  
   
