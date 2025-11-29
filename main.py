@@ -26,7 +26,7 @@ class Args:
     """if toggled, `torch.backends.cudnn.deterministic=False`"""
     cuda: bool = True
     """if toggled, cuda will be enabled by default"""
-    track: bool = True
+    track: bool = False
     """if toggled, this experiment will be tracked with Weights and Biases"""
     wandb_project_name: str = "cleanRL"
     """the wandb's project name"""
@@ -98,8 +98,6 @@ class Args:
     # for evaluation
     eval_episodes: int = 10
     """number of episodes to test the agent during evaluation"""
-    target_return: int = 475
-    """target return to consider the task solved (only for CartPole-v1)"""
     stable_hits_required: int = 10
     """number of stable hits to consider convergence"""
 
@@ -145,7 +143,6 @@ if __name__ == "__main__":
 
     # env setup
     env = make_env(args.env_id, args.capture_video, run_name)()
-    assert isinstance(env.action_space, gym.spaces.Discrete)
 
     if args.algorithm == "base":
         agent = BasePPOAgent(env).to(device)
@@ -189,6 +186,8 @@ if __name__ == "__main__":
 
     if args.env_id == "CartPole-v1":
         success_threshold = 500
+    elif args.env_id == "MountainCarContinuous-v0":
+        success_threshold = 90
 
     for iteration in range(1, args.num_iterations + 1):
         if episode_count <= 2400:
@@ -222,10 +221,8 @@ if __name__ == "__main__":
                 current_cycle = episode_count // args.task_switch_episode_interval
                 task_seen[current_task] = True
 
-                writer.add_scalar("charts/masspole", env.unwrapped.masspole, episode_count)
-                writer.add_scalar("charts/force_mag", env.unwrapped.force_mag, episode_count)
-                writer.add_scalar("charts/gravity", env.unwrapped.gravity, episode_count)
-                
+                task_manager.log_task_params(writer, current_task, episode_count)
+
                 if info and "episode" in info:
                     episode_count += 1
                     print(f"global_step={global_step}, episodic_return={info['episode']['r']}")
@@ -361,8 +358,10 @@ if __name__ == "__main__":
                 for start in range(0, args.batch_size, args.minibatch_size):
                     end = start + args.minibatch_size
                     mb_inds = b_inds[start:end]
-
-                    _, newlogprob, entropy, newvalue = agent.get_action_and_value(b_obs[mb_inds], b_actions.long()[mb_inds])
+                    if agent.discrete_action_space:
+                        _, newlogprob, entropy, newvalue = agent.get_action_and_value(b_obs[mb_inds], b_actions.long()[mb_inds])
+                    else:
+                        _, newlogprob, entropy, newvalue = agent.get_action_and_value(b_obs[mb_inds], b_actions[mb_inds])
                     logratio = newlogprob - b_logprobs[mb_inds]
                     ratio = logratio.exp()
 

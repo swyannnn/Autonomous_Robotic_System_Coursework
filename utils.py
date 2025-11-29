@@ -78,3 +78,9 @@ def layer_init(layer, std=np.sqrt(2), bias_const=0.0):
     torch.nn.init.orthogonal_(layer.weight, std)
     torch.nn.init.constant_(layer.bias, bias_const)
     return layer
+
+def format_obs(x):
+    x = torch.tensor(x, dtype=torch.float32)
+    if x.ndim == 1:
+        x = x.unsqueeze(0)   # convert (obs_dim,) -> (1, obs_dim)
+    return x

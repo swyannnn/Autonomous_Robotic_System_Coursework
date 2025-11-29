@@ -16,5 +16,27 @@ CartPole-v1:
     masspole: 3.0
     force_mag: 5.0
 
+MountainCarContinuous-v0:
+  0:   # BASELINE (TASK 0)
+    power: 0.0015
+    max_speed: 0.07
+    goal_position: 0.45
+    goal_velocity: 0.0
   
-  
+  1:   # HARDER HILL → REDUCE max_speed
+    power: 0.0015
+    max_speed: 0.05       # ↓ harder to generate momentum
+    goal_position: 0.45
+    goal_velocity: 0.0
+
+  2:   # WEAKER ENGINE → REDUCE power
+    power: 0.0010         # ↓ much harder to climb
+    max_speed: 0.07
+    goal_position: 0.45
+    goal_velocity: 0.0
+
+  3:   # STRICT SUCCESS CRITERION
+    power: 0.0015
+    max_speed: 0.07
+    goal_position: 0.55   # ↑ must go further up
+    goal_velocity: 0.02   # ↑ must arrive with momentum

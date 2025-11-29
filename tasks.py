@@ -16,11 +16,16 @@ def set_task_cartpole_parameters(env, params):
 
 def set_task_mountaincar_parameters(env, params):
     """Apply physics modifications to MountainCar."""
-    gravity = params["gravity"]
-    force = params["force"]
+    power = params["power"]
+    max_speed = params["max_speed"]
+    goal_position = params["goal_position"]
+    goal_velocity = params["goal_velocity"]
 
-    env.unwrapped.gravity = gravity
-    env.unwrapped.force = force
+    env.unwrapped.power = power
+    env.unwrapped.max_speed = max_speed
+    env.unwrapped.goal_position = goal_position
+    env.unwrapped.goal_velocity = goal_velocity
+
 
 class TaskManager:
     def __init__(self, env, task_config_file="task_config.yaml"):
@@ -45,3 +50,9 @@ class TaskManager:
     def apply_params(self, raw_env, params):
         """Apply task parameters to a given raw env (used in evaluation)."""
         self.set_task_parameters(raw_env, params)
+
+    def log_task_params(self, logger, task_index: int, episode_count: int):
+        """Log current task parameters."""
+        params = self.tasks[task_index]
+        for key, value in params.items():
+            logger.add_scalar(f"task/{key}", value, episode_count)

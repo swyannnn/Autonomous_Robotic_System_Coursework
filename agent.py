@@ -6,7 +6,7 @@ import numpy as np
 from torch.distributions.categorical import Categorical
 from collections import OrderedDict
 from torch.distributions.normal import Normal
-from utils import ScaleLayer, DiagLinear, layer_init
+from utils import ScaleLayer, DiagLinear, layer_init, format_obs
 
 class BasePPOAgent(nn.Module):
     def __init__(self, envs):
@@ -16,7 +16,6 @@ class BasePPOAgent(nn.Module):
         # The paper expects a 1-env Gym
         # CleanRL uses vectorized envs → we must extract its single env space
         self.env = envs       # unwrap vector env
-        self.build_network()
 
         self.space = envs.action_space
         if isinstance(self.space, spaces.Discrete):
@@ -26,14 +25,18 @@ class BasePPOAgent(nn.Module):
         else:
             self.discrete_action_space = False
 
-        # Determine output dimension
-        output_size = self.space.n if self.discrete_action_space else np.prod(self.space.shape)
-        self.actor_logstd = nn.Parameter(torch.zeros(1, output_size))
-
         if self.discrete_action_space:  #  use the appropriate function to get actions
             self.get_action_and_value = self._get_action_and_value_discrete
         else:
             self.get_action_and_value = self._get_action_and_value_continuous
+
+        if self.discrete_action_space:
+            self.actor_output_dim = self.space.n
+        else:
+            self.actor_output_dim = np.prod(self.space.shape)
+            self.actor_logstd = nn.Parameter(torch.zeros(1, self.actor_output_dim))
+                    
+        self.build_network()
 
     def get_value(self, x):
         return self.critic(x)
@@ -43,15 +46,19 @@ class BasePPOAgent(nn.Module):
         probs = Categorical(logits=logits)
         if action is None:
             action = probs.sample()
+            action = action.squeeze()  # not using vector env
         return action, probs.log_prob(action), probs.entropy(), self.critic(x)
     
     def _get_action_and_value_continuous(self, x, action=None):
+        x = torch.atleast_2d(x)
+
         action_mean = self.actor(x)
         action_logstd = self.actor_logstd.expand_as(action_mean)
         action_std = torch.exp(action_logstd)
         probs = Normal(action_mean, action_std)
         if action is None:
             action = probs.sample()
+            action = action.squeeze(-1)
         return action, probs.log_prob(action).sum(1), probs.entropy().sum(1), self.critic(x)
 
     def build_network(self):
@@ -67,7 +74,7 @@ class BasePPOAgent(nn.Module):
             nn.Tanh(),
             layer_init(nn.Linear(64, 64)),
             nn.Tanh(),
-            layer_init(nn.Linear(64, self.env.action_space.n), std=0.01),
+            layer_init(nn.Linear(64, self.actor_output_dim), std=0.01),
         )
     
 class ParsevalPPOAgent(nn.Module):
@@ -93,11 +100,6 @@ class ParsevalPPOAgent(nn.Module):
             self.discrete_action_space = True
         else:
             self.discrete_action_space = False
-        
-        # Build network exactly as in paper
-        self.build_network(num_hidden, self.add_diag_layer, 
-                            self.activation, self.init_gain, self.input_scale,
-                            self.learnable_input_scale, self.discrete_action_space)
 
         # Determine output dimension
         output_size = self.space.n if self.discrete_action_space else np.prod(self.space.shape)
@@ -108,19 +110,23 @@ class ParsevalPPOAgent(nn.Module):
         else:
             self.get_action_and_value = self._get_action_and_value_continuous
 
+        # Build network exactly as in paper
+        self.actor_output_dim = self.env.action_space.n if self.discrete_action_space else np.prod(self.env.action_space.shape)
+        self.build_network(num_hidden)
+
     def get_value(self, x):
         return self.critic(x)
 
     def _get_action_and_value_continuous(self, x, action=None):
-        x = torch.atleast_2d(x)   # adds a batch dimension if there's only one
-
+        x = torch.atleast_2d(x)
+        
         action_mean = self.actor(x)
         action_logstd = self.actor_logstd.expand_as(action_mean)
         action_std = torch.exp(action_logstd)
         probs = Normal(action_mean, action_std)
         if action is None:
             action = probs.sample()
-            action = action.squeeze()  # not using vector env
+            action = action.squeeze()
         return action, probs.log_prob(action).sum(1), probs.entropy().sum(1), self.critic(x)
 
     def _get_action_and_value_discrete(self, x, action=None):
@@ -131,51 +137,50 @@ class ParsevalPPOAgent(nn.Module):
         action = action.squeeze(-1)
         return action, probs.log_prob(action), probs.entropy(), self.critic(x)
 
-    def build_network(self, num_hidden, add_diag_layer, activation, init_gain, 
-                      input_scale, learnable_input_scale, discrete_action_space):
+    def build_network(self, num_hidden):
         ''' '''
         layer_name = 'linear_orthog'
         num_hidden_out = num_hidden
 
-        actor_output_dim = self.env.action_space.n if discrete_action_space else np.prod(self.env.action_space.shape)
+        actor_output_dim = self.env.action_space.n if self.discrete_action_space else np.prod(self.env.action_space.shape)
 
-        if add_diag_layer:
+        if self.add_diag_layer:
             self.critic = nn.Sequential(OrderedDict( [
-                ('input_scale', ScaleLayer(input_scale, learnable_input_scale)),
-                (f'{layer_name}_1', layer_init(nn.Linear(np.array(self.env.observation_space.shape).prod(), num_hidden_out), std=init_gain)),
+                ('input_scale', ScaleLayer(self.input_scale, self.learnable_input_scale)),
+                (f'{layer_name}_1', layer_init(nn.Linear(np.array(self.env.observation_space.shape).prod(), num_hidden_out), std=self.init_gain)),
                 ('diag_1', DiagLinear(num_hidden_out)),
-                (f'{activation}_1', nn.Tanh()),
-                (f'{layer_name}_2', layer_init(nn.Linear(num_hidden, num_hidden_out), std=init_gain)),
+                (f'{self.activation}_1', nn.Tanh()),
+                (f'{layer_name}_2', layer_init(nn.Linear(num_hidden, num_hidden_out), std=self.init_gain)),
                 ('diag_2', DiagLinear(num_hidden_out)),
-                (f'{activation}_2',nn.Tanh()),
+                (f'{self.activation}_2',nn.Tanh()),
                 # Parseval regularization enforces orthogonality for all but the last layer, and the last layer must remain unrestricted to preserve expressive capacity.
                 ('linear_output', layer_init(nn.Linear(num_hidden, 1), std=1.0)),
             ]))
             self.actor = nn.Sequential(OrderedDict( [
-                ('input_scale', ScaleLayer(input_scale)),
-                (f'{layer_name}_1', layer_init(nn.Linear(np.array(self.env.observation_space.shape).prod(), num_hidden_out), std=init_gain)),
+                ('input_scale', ScaleLayer(self.input_scale)),
+                (f'{layer_name}_1', layer_init(nn.Linear(np.array(self.env.observation_space.shape).prod(), num_hidden_out), std=self.init_gain)),
                 ('diag_1', DiagLinear(num_hidden_out)),
-                (f'{activation}_1', nn.Tanh()),
-                (f'{layer_name}_2', layer_init(nn.Linear(num_hidden, num_hidden_out), std=init_gain)),
+                (f'{self.activation}_1', nn.Tanh()),
+                (f'{layer_name}_2', layer_init(nn.Linear(num_hidden, num_hidden_out), std=self.init_gain)),
                 ('diag_2', DiagLinear(num_hidden_out)),
-                (f'{activation}_2',nn.Tanh()),
+                (f'{self.activation}_2',nn.Tanh()),
                 ('linear_output', layer_init(nn.Linear(num_hidden, actor_output_dim), std=0.01)),
             ]))
         else:
             self.critic = nn.Sequential(OrderedDict( [
-                ('input_scale', ScaleLayer(input_scale, learnable_input_scale)),
-                (f'{layer_name}_1', layer_init(nn.Linear(np.array(self.env.observation_space.shape).prod(), num_hidden_out), std=init_gain)),
-                (f'{activation}_1', nn.Tanh()),
-                (f'{layer_name}_2', layer_init(nn.Linear(num_hidden, num_hidden_out), std=init_gain)),
-                (f'{activation}_2', nn.Tanh()),
+                ('input_scale', ScaleLayer(self.input_scale, self.learnable_input_scale)),
+                (f'{layer_name}_1', layer_init(nn.Linear(np.array(self.env.observation_space.shape).prod(), num_hidden_out), std=self.init_gain)),
+                (f'{self.activation}_1', nn.Tanh()),
+                (f'{layer_name}_2', layer_init(nn.Linear(num_hidden, num_hidden_out), std=self.init_gain)),
+                (f'{self.activation}_2', nn.Tanh()),
                 ('linear_output', layer_init(nn.Linear(num_hidden, 1), std=1.0)),
             ]))
             self.actor = nn.Sequential(OrderedDict( [
-                ('input_scale', ScaleLayer(input_scale, learnable_input_scale)),
-                (f'{layer_name}_1', layer_init(nn.Linear(np.array(self.env.observation_space.shape).prod(), num_hidden_out), std=init_gain)),
-                (f'{activation}_1', nn.Tanh()),
-                (f'{layer_name}_2', layer_init(nn.Linear(num_hidden, num_hidden_out), std=init_gain)),
-                (f'{activation}_2', nn.Tanh()),
+                ('input_scale', ScaleLayer(self.input_scale, self.learnable_input_scale)),
+                (f'{layer_name}_1', layer_init(nn.Linear(np.array(self.env.observation_space.shape).prod(), num_hidden_out), std=self.init_gain)),
+                (f'{self.activation}_1', nn.Tanh()),
+                (f'{layer_name}_2', layer_init(nn.Linear(num_hidden, num_hidden_out), std=self.init_gain)),
+                (f'{self.activation}_2', nn.Tanh()),
                 ('linear_output', layer_init(nn.Linear(num_hidden, actor_output_dim), std=0.01)),
             ]))
 
