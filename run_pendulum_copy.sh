@@ -1,0 +1,10 @@
+python main.py --seed 1 --env_id Pendulum-v1 --ent_coef 0.0 --learning_rate 3e-4 --task_switch_episode_interval 1000
+python main.py --seed 2 --env_id Pendulum-v1 --ent_coef 0.0 --learning_rate 3e-4 --task_switch_episode_interval 1000
+python main.py --seed 3 --env_id Pendulum-v1 --ent_coef 0.0 --learning_rate 3e-4 --task_switch_episode_interval 1000
+python main.py --seed 4 --env_id Pendulum-v1 --ent_coef 0.0 --learning_rate 3e-4 --task_switch_episode_interval 1000
+python main.py --seed 5 --env_id Pendulum-v1 --ent_coef 0.0 --learning_rate 3e-4 --task_switch_episode_interval 1000
+python main.py --seed 6 --env_id Pendulum-v1 --ent_coef 0.0 --learning_rate 3e-4 --task_switch_episode_interval 1000
+python main.py --seed 7 --env_id Pendulum-v1 --ent_coef 0.0 --learning_rate 3e-4 --task_switch_episode_interval 1000
+python main.py --seed 8 --env_id Pendulum-v1 --ent_coef 0.0 --learning_rate 3e-4 --task_switch_episode_interval 1000
+python main.py --seed 9 --env_id Pendulum-v1 --ent_coef 0.0 --learning_rate 3e-4 --task_switch_episode_interval 1000
+python main.py --seed 10 --env_id Pendulum-v1 --ent_coef 0.0 --learning_rate 3e-4 --task_switch_episode_interval 1000

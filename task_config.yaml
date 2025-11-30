@@ -53,12 +53,12 @@ Pendulum-v1: # g=gravity, m=mass, l=length of rod
     g: 9.8
     max_torque: 2.0        # weaker but solvable
     m: 1.0
-    l: 2.0
+    l: 1.5
 
   2:  
     g: 9.8           # lower gravity → slower dynamics
     max_torque: 2.0
-    m: 1.5
+    m: 1.2
     l: 1.0
 
   3:  

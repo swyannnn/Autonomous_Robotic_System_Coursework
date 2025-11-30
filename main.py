@@ -245,84 +245,84 @@ if __name__ == "__main__":
 
                         print(f"---- SWITCH TO TASK {current_task + 1} ----")
 
-                        # # ==================================
-                        # # 2. RUN EVALUATION ON *ALL* TASKS
-                        # # ==================================
-                        # print("Evaluating on all tasks...")
-                        # task_returns = []
-                        # task_success = []
-                        # forgetting_scores = []
-                        # for task_id in range(args.num_tasks):
-                        #     print(f"Evaluating on Task {task_id + 1}...")
+                        # ==================================
+                        # 2. RUN EVALUATION ON *ALL* TASKS
+                        # ==================================
+                        print("Evaluating on all tasks...")
+                        task_returns = []
+                        task_success = []
+                        forgetting_scores = []
+                        for task_id in range(args.num_tasks):
+                            print(f"Evaluating on Task {task_id + 1}...")
 
-                        #     mean_return, success_rate = evaluate_agent(
-                        #         agent, make_env, args, device,
-                        #         success_threshold=success_threshold,
-                        #         task_manager=task_manager,
-                        #         task_id=task_id,
-                        #         eval_episodes=args.eval_episodes
-                        #     )
+                            mean_return, success_rate = evaluate_agent(
+                                agent, make_env, args, device,
+                                success_threshold=success_threshold,
+                                task_manager=task_manager,
+                                task_id=task_id,
+                                eval_episodes=args.eval_episodes
+                            )
 
-                        #     # ---------------------------
-                        #     # Log direct performance
-                        #     # ---------------------------
-                        #     writer.add_scalar(f"eval/task_{task_id}/mean_return", mean_return, episode_count)
-                        #     writer.add_scalar(f"eval/task_{task_id}/success_rate", success_rate, episode_count)
+                            # ---------------------------
+                            # Log direct performance
+                            # ---------------------------
+                            writer.add_scalar(f"eval/task_{task_id}/mean_return", mean_return, episode_count)
+                            writer.add_scalar(f"eval/task_{task_id}/success_rate", success_rate, episode_count)
 
-                        #     task_returns.append(mean_return)
-                        #     task_success.append(success_rate)
+                            task_returns.append(mean_return)
+                            task_success.append(success_rate)
 
-                        #     # ---------------------------
-                        #     # Update performance matrix
-                        #     # ---------------------------
-                        #     performance_matrix[task_id][prev_task] = mean_return
+                            # ---------------------------
+                            # Update performance matrix
+                            # ---------------------------
+                            performance_matrix[task_id][prev_task] = mean_return
 
-                        #     # ---------------------------
-                        #     # Compute Forgetting BEFORE updating best_per_task
-                        #     # ---------------------------
-                        #     if (
-                        #         task_seen[task_id]              # Task must have been trained before
-                        #         and current_cycle > 0           # Skip first cycle
-                        #         and task_id != prev_task        # Don't compute forgetting for task just trained
-                        #     ):
-                        #         forgetting = best_per_task[task_id] - mean_return
-                        #         forgetting = max(forgetting, 0.0)   # prevent negative forgetting due to noise
-                        #     else:
-                        #         forgetting = 0.0
+                            # ---------------------------
+                            # Compute Forgetting BEFORE updating best_per_task
+                            # ---------------------------
+                            if (
+                                task_seen[task_id]              # Task must have been trained before
+                                and current_cycle > 0           # Skip first cycle
+                                and task_id != prev_task        # Don't compute forgetting for task just trained
+                            ):
+                                forgetting = best_per_task[task_id] - mean_return
+                                forgetting = max(forgetting, 0.0)   # prevent negative forgetting due to noise
+                            else:
+                                forgetting = 0.0
 
-                        #     writer.add_scalar(f"eval/task_{task_id}/forgetting", forgetting, episode_count)
-                        #     forgetting_scores.append(forgetting)
+                            writer.add_scalar(f"eval/task_{task_id}/forgetting", forgetting, episode_count)
+                            forgetting_scores.append(forgetting)
 
-                        #     # ---------------------------
-                        #     # Now update best_per_task AFTER forgetting calculation
-                        #     # ---------------------------
-                        #     best_per_task[task_id] = max(best_per_task[task_id], mean_return)
-                        #     import json
-                        #     save_path = f"runs/{run_name}/best_per_task.json"
-                        #     with open(save_path, "w") as f:
-                        #         json.dump(best_per_task, f, indent=4)
-                        #     # ---------------------------
-                        #     # Convergence tracking
-                        #     # ---------------------------
-                        #     if success_rate == 1.0:
-                        #         task_stable_hits[task_id] += 1
-                        #     else:
-                        #         task_stable_hits[task_id] = 0
+                            # ---------------------------
+                            # Now update best_per_task AFTER forgetting calculation
+                            # ---------------------------
+                            best_per_task[task_id] = max(best_per_task[task_id], mean_return)
+                            import json
+                            save_path = f"runs/{run_name}/best_per_task.json"
+                            with open(save_path, "w") as f:
+                                json.dump(best_per_task, f, indent=4)
+                            # ---------------------------
+                            # Convergence tracking
+                            # ---------------------------
+                            if success_rate == 1.0:
+                                task_stable_hits[task_id] += 1
+                            else:
+                                task_stable_hits[task_id] = 0
 
                             
-                        # # check if all tasks have converged
-                        # if all([task_stable_hits[t] >= args.stable_hits_required for t in range(args.num_tasks)]):
-                        #     if convergence_episode is None:
-                        #         convergence_episode = episode_count
-                        #         writer.add_scalar("eval/convergence_episode", convergence_episode, episode_count)
-                        #         writer.add_text("eval/convergence_info", f"Converged at episode {convergence_episode}", episode_count)
-                        #         print(f"[CONVERGED] at episode {convergence_episode}")
-                        # writer.add_scalar("eval/avg_mean_return", np.mean(task_returns), episode_count)
-                        # writer.add_scalar("eval/avg_success_rate", np.mean(task_success), episode_count)
-                        # writer.add_scalar("eval/avg_forgetting", np.mean(forgetting_scores), episode_count)
+                        # check if all tasks have converged
+                        if all([task_stable_hits[t] >= args.stable_hits_required for t in range(args.num_tasks)]):
+                            if convergence_episode is None:
+                                convergence_episode = episode_count
+                                writer.add_scalar("eval/convergence_episode", convergence_episode, episode_count)
+                                writer.add_text("eval/convergence_info", f"Converged at episode {convergence_episode}", episode_count)
+                                print(f"[CONVERGED] at episode {convergence_episode}")
+                        writer.add_scalar("eval/avg_mean_return", np.mean(task_returns), episode_count)
+                        writer.add_scalar("eval/avg_success_rate", np.mean(task_success), episode_count)
+                        writer.add_scalar("eval/avg_forgetting", np.mean(forgetting_scores), episode_count)
 
-                        # # save the model
-                        # torch.save(agent.state_dict(), f"runs/{run_name}/episode_{episode_count}.pth")
+                        # save the model
+                        torch.save(agent.state_dict(), f"runs/{run_name}/episode_{episode_count}.pth")
 
             writer.add_scalar("charts/task_id_episode", current_task, episode_count)
 

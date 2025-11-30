@@ -283,7 +283,7 @@ if __name__ == "__main__":
 
 # Example usage:
 # python plot_tb_scalars.py \
-#     --runs runs/Pendulum-v1__base__* \
+#     --runs runs_exp/Pendulum-v1__base__* \
 #     --tag charts/episodic_return \
 #     --output episodic_return_base_pendulum.png \
 #     --interval 300 \
