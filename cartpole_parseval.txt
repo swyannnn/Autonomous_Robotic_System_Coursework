@@ -1,0 +1,454 @@
+Found 10 trials.
+
+===============================
+      Trial 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__10__1764357617
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__10__1764357617/episode_300.pth
+/media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/analyse_model_copy.py:137: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  agent.load_state_dict(torch.load(model_path, map_location=device))
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 0 on Task T1: 75.15
+  Model 0 on Task T2: 49.25
+  Model 0 on Task T3: 39.10
+  Model 0 on Task T4: 30.40
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__10__1764357617/episode_600.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 1 on Task T1: 183.30
+  Model 1 on Task T2: 112.05
+  Model 1 on Task T3: 80.85
+  Model 1 on Task T4: 50.20
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__10__1764357617/episode_900.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 2 on Task T1: 453.40
+  Model 2 on Task T2: 382.05
+  Model 2 on Task T3: 200.65
+  Model 2 on Task T4: 130.15
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__10__1764357617/episode_1200.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 3 on Task T1: 454.05
+  Model 3 on Task T2: 424.95
+  Model 3 on Task T3: 389.55
+  Model 3 on Task T4: 229.45
+
+===============================
+      Trial 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__1__1764343850
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__1__1764343850/episode_300.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 0 on Task T1: 76.80
+  Model 0 on Task T2: 50.00
+  Model 0 on Task T3: 36.50
+  Model 0 on Task T4: 36.45
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__1__1764343850/episode_600.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 1 on Task T1: 336.00
+  Model 1 on Task T2: 177.10
+  Model 1 on Task T3: 81.85
+  Model 1 on Task T4: 74.45
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__1__1764343850/episode_900.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 2 on Task T1: 445.85
+  Model 2 on Task T2: 336.85
+  Model 2 on Task T3: 147.50
+  Model 2 on Task T4: 98.95
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__1__1764343850/episode_1200.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 3 on Task T1: 412.05
+  Model 3 on Task T2: 392.00
+  Model 3 on Task T3: 341.05
+  Model 3 on Task T4: 236.10
+
+===============================
+      Trial 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__2__1764345249
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__2__1764345249/episode_300.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 0 on Task T1: 112.90
+  Model 0 on Task T2: 81.30
+  Model 0 on Task T3: 37.70
+  Model 0 on Task T4: 42.70
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__2__1764345249/episode_600.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 1 on Task T1: 426.45
+  Model 1 on Task T2: 209.30
+  Model 1 on Task T3: 96.10
+  Model 1 on Task T4: 69.35
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__2__1764345249/episode_900.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 2 on Task T1: 270.00
+  Model 2 on Task T2: 206.95
+  Model 2 on Task T3: 167.10
+  Model 2 on Task T4: 91.25
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__2__1764345249/episode_1200.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 3 on Task T1: 462.95
+  Model 3 on Task T2: 446.95
+  Model 3 on Task T3: 445.90
+  Model 3 on Task T4: 265.20
+
+===============================
+      Trial 4: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__3__1764346892
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__3__1764346892/episode_300.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 0 on Task T1: 73.35
+  Model 0 on Task T2: 54.55
+  Model 0 on Task T3: 38.15
+  Model 0 on Task T4: 35.20
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__3__1764346892/episode_600.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 1 on Task T1: 450.25
+  Model 1 on Task T2: 251.05
+  Model 1 on Task T3: 129.40
+  Model 1 on Task T4: 83.25
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__3__1764346892/episode_900.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 2 on Task T1: 435.25
+  Model 2 on Task T2: 391.15
+  Model 2 on Task T3: 183.15
+  Model 2 on Task T4: 116.00
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__3__1764346892/episode_1200.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 3 on Task T1: 500.00
+  Model 3 on Task T2: 500.00
+  Model 3 on Task T3: 442.30
+  Model 3 on Task T4: 282.25
+
+===============================
+      Trial 5: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__4__1764348493
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__4__1764348493/episode_300.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 0 on Task T1: 88.75
+  Model 0 on Task T2: 49.85
+  Model 0 on Task T3: 38.05
+  Model 0 on Task T4: 39.40
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__4__1764348493/episode_600.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 1 on Task T1: 345.50
+  Model 1 on Task T2: 236.90
+  Model 1 on Task T3: 107.30
+  Model 1 on Task T4: 81.45
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__4__1764348493/episode_900.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 2 on Task T1: 500.00
+  Model 2 on Task T2: 466.15
+  Model 2 on Task T3: 216.95
+  Model 2 on Task T4: 120.70
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__4__1764348493/episode_1200.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 3 on Task T1: 500.00
+  Model 3 on Task T2: 500.00
+  Model 3 on Task T3: 500.00
+  Model 3 on Task T4: 399.25
+
+===============================
+      Trial 6: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__5__1764350111
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__5__1764350111/episode_300.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 0 on Task T1: 57.55
+  Model 0 on Task T2: 49.70
+  Model 0 on Task T3: 37.60
+  Model 0 on Task T4: 36.25
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__5__1764350111/episode_600.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 1 on Task T1: 425.45
+  Model 1 on Task T2: 227.40
+  Model 1 on Task T3: 94.85
+  Model 1 on Task T4: 75.85
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__5__1764350111/episode_900.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 2 on Task T1: 228.95
+  Model 2 on Task T2: 192.80
+  Model 2 on Task T3: 132.95
+  Model 2 on Task T4: 68.45
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__5__1764350111/episode_1200.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 3 on Task T1: 394.25
+  Model 3 on Task T2: 382.05
+  Model 3 on Task T3: 265.65
+  Model 3 on Task T4: 177.55
+
+===============================
+      Trial 7: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__6__1764351301
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__6__1764351301/episode_300.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 0 on Task T1: 131.80
+  Model 0 on Task T2: 76.35
+  Model 0 on Task T3: 43.60
+  Model 0 on Task T4: 40.55
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__6__1764351301/episode_600.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 1 on Task T1: 425.70
+  Model 1 on Task T2: 347.30
+  Model 1 on Task T3: 142.50
+  Model 1 on Task T4: 85.20
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__6__1764351301/episode_900.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 2 on Task T1: 481.20
+  Model 2 on Task T2: 398.50
+  Model 2 on Task T3: 165.65
+  Model 2 on Task T4: 110.75
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__6__1764351301/episode_1200.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 3 on Task T1: 438.30
+  Model 3 on Task T2: 445.80
+  Model 3 on Task T3: 400.80
+  Model 3 on Task T4: 204.75
+
+===============================
+      Trial 8: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__7__1764352925
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__7__1764352925/episode_300.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 0 on Task T1: 58.80
+  Model 0 on Task T2: 44.60
+  Model 0 on Task T3: 37.25
+  Model 0 on Task T4: 30.25
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__7__1764352925/episode_600.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 1 on Task T1: 358.00
+  Model 1 on Task T2: 251.70
+  Model 1 on Task T3: 98.90
+  Model 1 on Task T4: 56.30
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__7__1764352925/episode_900.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 2 on Task T1: 189.90
+  Model 2 on Task T2: 147.60
+  Model 2 on Task T3: 83.70
+  Model 2 on Task T4: 61.55
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__7__1764352925/episode_1200.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 3 on Task T1: 495.50
+  Model 3 on Task T2: 486.15
+  Model 3 on Task T3: 426.65
+  Model 3 on Task T4: 197.65
+
+===============================
+      Trial 9: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__8__1764354508
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__8__1764354508/episode_300.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 0 on Task T1: 63.10
+  Model 0 on Task T2: 40.50
+  Model 0 on Task T3: 35.95
+  Model 0 on Task T4: 36.40
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__8__1764354508/episode_600.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 1 on Task T1: 165.75
+  Model 1 on Task T2: 111.95
+  Model 1 on Task T3: 64.10
+  Model 1 on Task T4: 59.35
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__8__1764354508/episode_900.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 2 on Task T1: 365.60
+  Model 2 on Task T2: 340.90
+  Model 2 on Task T3: 206.60
+  Model 2 on Task T4: 134.05
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__8__1764354508/episode_1200.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 3 on Task T1: 500.00
+  Model 3 on Task T2: 500.00
+  Model 3 on Task T3: 495.80
+  Model 3 on Task T4: 419.00
+
+===============================
+      Trial 10: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__9__1764356024
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__9__1764356024/episode_300.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 0 on Task T1: 121.95
+  Model 0 on Task T2: 52.80
+  Model 0 on Task T3: 42.65
+  Model 0 on Task T4: 38.90
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__9__1764356024/episode_600.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 1 on Task T1: 191.20
+  Model 1 on Task T2: 147.40
+  Model 1 on Task T3: 82.45
+  Model 1 on Task T4: 57.95
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__9__1764356024/episode_900.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 2 on Task T1: 397.65
+  Model 2 on Task T2: 240.15
+  Model 2 on Task T3: 123.30
+  Model 2 on Task T4: 81.40
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__9__1764356024/episode_1200.pth
+[TaskManager] Switched to Task 1: {'gravity': 9.8, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 2: {'gravity': 19.6, 'masspole': 0.1, 'force_mag': 10.0}
+[TaskManager] Switched to Task 3: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 7.0}
+[TaskManager] Switched to Task 4: {'gravity': 9.8, 'masspole': 3.0, 'force_mag': 5.0}
+  Model 3 on Task T1: 473.70
+  Model 3 on Task T2: 467.40
+  Model 3 on Task T3: 222.05
+  Model 3 on Task T4: 150.05
+
+
+=====================================
+        MEAN FORGETTING TABLE
+=====================================
+Task | T1 | T2 | T3 | T4
+------------------------
+T1 |  n/a | -244.745 | -290.765 | -377.065 |
+T2 |  n/a | n/a | -103.095 | -247.315 |
+T3 |  n/a | n/a | n/a | -230.220 |
+T4 |  n/a | n/a | n/a | n/a |

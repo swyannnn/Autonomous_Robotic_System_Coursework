@@ -5,10 +5,12 @@ def set_task_cartpole_parameters(env, params):
     gravity = params["gravity"]
     masspole = params["masspole"]
     force_mag = params["force_mag"]
+    # length = params["length"]
 
     # Set mass of pole
     env.unwrapped.masspole = masspole
     env.unwrapped.force_mag = force_mag
+    # env.unwrapped.length = length
     # Need to recompute dependent terms
     env.unwrapped.total_mass = env.unwrapped.masspole + env.unwrapped.masscart
     env.unwrapped.polemass_length = env.unwrapped.masspole * env.unwrapped.length
