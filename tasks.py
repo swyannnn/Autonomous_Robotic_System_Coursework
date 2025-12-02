@@ -40,6 +40,51 @@ def set_task_pendulum_parameters(env, params):
     env.unwrapped.l = length
     env.unwrapped.g = gravity
 
+def set_task_acrobot_parameters(env, params):
+    """Apply physics modifications to Acrobot (Gymnasium)."""
+
+    u = env.unwrapped
+
+    # Gravity
+    if "g" in params:
+        u.g = params["g"]
+
+    # Link lengths
+    if "LINK_LENGTH_1" in params:
+        u.LINK_LENGTH_1 = params["LINK_LENGTH_1"]
+    if "LINK_LENGTH_2" in params:
+        u.LINK_LENGTH_2 = params["LINK_LENGTH_2"]
+
+    # Link masses
+    if "LINK_MASS_1" in params:
+        u.LINK_MASS_1 = params["LINK_MASS_1"]
+    if "LINK_MASS_2" in params:
+        u.LINK_MASS_2 = params["LINK_MASS_2"]
+
+    # Center of mass positions
+    if "LINK_COM_POS_1" in params:
+        u.LINK_COM_POS_1 = params["LINK_COM_POS_1"]
+    if "LINK_COM_POS_2" in params:
+        u.LINK_COM_POS_2 = params["LINK_COM_POS_2"]
+
+    # Moment of inertia
+    if "LINK_MOI" in params:
+        u.LINK_MOI = params["LINK_MOI"]
+
+    # Torque scaling
+    if "MAX_TORQUE" in params:
+        u.MAX_TORQUE = params["MAX_TORQUE"]
+
+    # Integration timestep
+    if "dt" in params:
+        u.dt = params["dt"]
+
+    # Angular velocity limits
+    if "MAX_VEL_1" in params:
+        u.MAX_VEL_1 = params["MAX_VEL_1"]
+    if "MAX_VEL_2" in params:
+        u.MAX_VEL_2 = params["MAX_VEL_2"]
+
 class TaskManager:
     def __init__(self, env, task_config_file="task_config.yaml"):
         """
@@ -57,6 +102,10 @@ class TaskManager:
             self.set_task_parameters = set_task_mountaincar_parameters
         elif env.spec.id == "Pendulum-v1":
             self.set_task_parameters = set_task_pendulum_parameters
+        elif env.spec.id == "Acrobot-v1":
+            self.set_task_parameters = set_task_acrobot_parameters
+        else:
+            raise NotImplementedError(f"TaskManager not implemented for env {env.spec.id}")
 
     def set_task(self, task_index: int):
         """Apply selected task to all envs or single env."""

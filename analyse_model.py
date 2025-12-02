@@ -3,7 +3,7 @@ import numpy as np
 import json
 import glob
 import os
-from agent import BasePPOAgent, ParsevalPPOAgent
+from agent import PPOAgent
 from utils import make_env
 from tasks import TaskManager
 import gymnasium as gym
@@ -78,6 +78,7 @@ def evaluate_multi_trial_forgetting(
     algorithm="base",
     num_tasks=4,
     eval_episodes=20,
+    episode_per_task=300,
     device="cuda"
 ):
 
@@ -98,7 +99,7 @@ def evaluate_multi_trial_forgetting(
     # Select agent type
     # -----------------------------------
     def create_agent():
-        return BasePPOAgent(env).to(device) if algorithm == "base" else ParsevalPPOAgent(env).to(device)
+        return PPOAgent(env, add_diag_layer=False).to(device) if algorithm == "base" else PPOAgent(env).to(device)
 
     # Storage
     perf_all_trials = []
@@ -113,10 +114,7 @@ def evaluate_multi_trial_forgetting(
         print(f"===============================")
 
         model_paths = [
-            os.path.join(base_path, "episode_300.pth"),
-            os.path.join(base_path, "episode_600.pth"),
-            os.path.join(base_path, "episode_900.pth"),
-            os.path.join(base_path, "episode_1200.pth"),
+            os.path.join(base_path, f"episode_{(t+1)*episode_per_task}.pth") for t in range(num_tasks)
         ]
 
         # ------------------------------
@@ -208,13 +206,20 @@ def evaluate_multi_trial_forgetting(
 # RUN EXAMPLE
 # ============================================================
 
-root_pattern = "/media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/CartPole-v1__parseval__*"
+root_pattern = "/media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__base__*"
+if "CartPole-v1" in root_pattern:
+    env_id = "CartPole-v1"
+elif "Pendulum-v1" in root_pattern:
+    env_id = "Pendulum-v1"
+elif "Acrobot-v1" in root_pattern:
+    env_id = "Acrobot-v1"
 
 perf_all_trials, forgetting_mean, forgetting_std = evaluate_multi_trial_forgetting(
     root_pattern=root_pattern,
-    env_id="CartPole-v1" if "CartPole" in root_pattern else "Pendulum-v1",
+    env_id=env_id,
     algorithm="base" if "base" in root_pattern else "parseval",
     num_tasks=4,
     eval_episodes=20,
+    episode_per_task=300,
     device="cuda"
 )

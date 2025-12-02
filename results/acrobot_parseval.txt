@@ -1,0 +1,454 @@
+Found 10 trials.
+
+===============================
+      Trial 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__10__1764635172
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__10__1764635172/episode_300.pth
+/media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/analyse_model.py:135: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  agent.load_state_dict(torch.load(model_path, map_location=device))
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 0 on Task T1: -500.00
+  Model 0 on Task T2: -500.00
+  Model 0 on Task T3: -500.00
+  Model 0 on Task T4: -500.00
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__10__1764635172/episode_600.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 1 on Task T1: -160.80
+  Model 1 on Task T2: -143.95
+  Model 1 on Task T3: -217.05
+  Model 1 on Task T4: -109.70
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__10__1764635172/episode_900.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 2 on Task T1: -143.75
+  Model 2 on Task T2: -120.05
+  Model 2 on Task T3: -169.60
+  Model 2 on Task T4: -164.95
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__10__1764635172/episode_1200.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 3 on Task T1: -136.85
+  Model 3 on Task T2: -108.20
+  Model 3 on Task T3: -217.30
+  Model 3 on Task T4: -105.70
+
+===============================
+      Trial 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__1__1764606098
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__1__1764606098/episode_300.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 0 on Task T1: -169.15
+  Model 0 on Task T2: -163.65
+  Model 0 on Task T3: -261.70
+  Model 0 on Task T4: -143.90
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__1__1764606098/episode_600.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 1 on Task T1: -160.55
+  Model 1 on Task T2: -125.20
+  Model 1 on Task T3: -201.65
+  Model 1 on Task T4: -125.40
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__1__1764606098/episode_900.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 2 on Task T1: -143.30
+  Model 2 on Task T2: -116.00
+  Model 2 on Task T3: -220.20
+  Model 2 on Task T4: -120.35
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__1__1764606098/episode_1200.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 3 on Task T1: -153.60
+  Model 3 on Task T2: -143.30
+  Model 3 on Task T3: -250.50
+  Model 3 on Task T4: -116.30
+
+===============================
+      Trial 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__2__1764607137
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__2__1764607137/episode_300.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 0 on Task T1: -500.00
+  Model 0 on Task T2: -500.00
+  Model 0 on Task T3: -500.00
+  Model 0 on Task T4: -500.00
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__2__1764607137/episode_600.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 1 on Task T1: -177.10
+  Model 1 on Task T2: -134.90
+  Model 1 on Task T3: -256.85
+  Model 1 on Task T4: -142.70
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__2__1764607137/episode_900.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 2 on Task T1: -150.75
+  Model 2 on Task T2: -120.05
+  Model 2 on Task T3: -206.00
+  Model 2 on Task T4: -121.35
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__2__1764607137/episode_1200.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 3 on Task T1: -163.10
+  Model 3 on Task T2: -115.55
+  Model 3 on Task T3: -206.55
+  Model 3 on Task T4: -102.60
+
+===============================
+      Trial 4: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__3__1764608343
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__3__1764608343/episode_300.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 0 on Task T1: -171.35
+  Model 0 on Task T2: -142.80
+  Model 0 on Task T3: -201.80
+  Model 0 on Task T4: -136.35
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__3__1764608343/episode_600.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 1 on Task T1: -159.30
+  Model 1 on Task T2: -118.75
+  Model 1 on Task T3: -246.15
+  Model 1 on Task T4: -112.40
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__3__1764608343/episode_900.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 2 on Task T1: -153.35
+  Model 2 on Task T2: -134.10
+  Model 2 on Task T3: -223.20
+  Model 2 on Task T4: -117.10
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__3__1764608343/episode_1200.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 3 on Task T1: -140.35
+  Model 3 on Task T2: -113.55
+  Model 3 on Task T3: -230.20
+  Model 3 on Task T4: -107.50
+
+===============================
+      Trial 5: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__4__1764609381
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__4__1764609381/episode_300.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 0 on Task T1: -213.30
+  Model 0 on Task T2: -179.30
+  Model 0 on Task T3: -253.10
+  Model 0 on Task T4: -192.35
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__4__1764609381/episode_600.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 1 on Task T1: -151.45
+  Model 1 on Task T2: -119.75
+  Model 1 on Task T3: -174.35
+  Model 1 on Task T4: -120.10
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__4__1764609381/episode_900.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 2 on Task T1: -145.55
+  Model 2 on Task T2: -127.65
+  Model 2 on Task T3: -201.75
+  Model 2 on Task T4: -105.25
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__4__1764609381/episode_1200.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 3 on Task T1: -137.35
+  Model 3 on Task T2: -111.80
+  Model 3 on Task T3: -215.85
+  Model 3 on Task T4: -105.50
+
+===============================
+      Trial 6: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__5__1764612880
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__5__1764612880/episode_300.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 0 on Task T1: -174.00
+  Model 0 on Task T2: -145.40
+  Model 0 on Task T3: -243.65
+  Model 0 on Task T4: -133.30
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__5__1764612880/episode_600.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 1 on Task T1: -143.30
+  Model 1 on Task T2: -118.25
+  Model 1 on Task T3: -258.80
+  Model 1 on Task T4: -142.85
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__5__1764612880/episode_900.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 2 on Task T1: -138.45
+  Model 2 on Task T2: -117.05
+  Model 2 on Task T3: -228.55
+  Model 2 on Task T4: -124.50
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__5__1764612880/episode_1200.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 3 on Task T1: -139.35
+  Model 3 on Task T2: -114.05
+  Model 3 on Task T3: -218.65
+  Model 3 on Task T4: -97.50
+
+===============================
+      Trial 7: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__6__1764616831
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__6__1764616831/episode_300.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 0 on Task T1: -500.00
+  Model 0 on Task T2: -500.00
+  Model 0 on Task T3: -500.00
+  Model 0 on Task T4: -500.00
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__6__1764616831/episode_600.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 1 on Task T1: -151.40
+  Model 1 on Task T2: -134.15
+  Model 1 on Task T3: -242.80
+  Model 1 on Task T4: -130.45
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__6__1764616831/episode_900.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 2 on Task T1: -145.10
+  Model 2 on Task T2: -118.25
+  Model 2 on Task T3: -217.45
+  Model 2 on Task T4: -122.60
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__6__1764616831/episode_1200.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 3 on Task T1: -147.05
+  Model 3 on Task T2: -109.55
+  Model 3 on Task T3: -237.60
+  Model 3 on Task T4: -152.90
+
+===============================
+      Trial 8: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__7__1764621749
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__7__1764621749/episode_300.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 0 on Task T1: -500.00
+  Model 0 on Task T2: -500.00
+  Model 0 on Task T3: -500.00
+  Model 0 on Task T4: -494.35
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__7__1764621749/episode_600.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 1 on Task T1: -149.10
+  Model 1 on Task T2: -132.95
+  Model 1 on Task T3: -236.95
+  Model 1 on Task T4: -105.85
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__7__1764621749/episode_900.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 2 on Task T1: -156.90
+  Model 2 on Task T2: -113.40
+  Model 2 on Task T3: -205.50
+  Model 2 on Task T4: -95.80
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__7__1764621749/episode_1200.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 3 on Task T1: -136.35
+  Model 3 on Task T2: -112.10
+  Model 3 on Task T3: -187.45
+  Model 3 on Task T4: -107.35
+
+===============================
+      Trial 9: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__8__1764626534
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__8__1764626534/episode_300.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 0 on Task T1: -172.00
+  Model 0 on Task T2: -144.00
+  Model 0 on Task T3: -224.25
+  Model 0 on Task T4: -131.60
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__8__1764626534/episode_600.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 1 on Task T1: -147.45
+  Model 1 on Task T2: -123.00
+  Model 1 on Task T3: -243.75
+  Model 1 on Task T4: -158.15
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__8__1764626534/episode_900.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 2 on Task T1: -163.20
+  Model 2 on Task T2: -117.25
+  Model 2 on Task T3: -197.95
+  Model 2 on Task T4: -107.80
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__8__1764626534/episode_1200.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 3 on Task T1: -144.40
+  Model 3 on Task T2: -114.05
+  Model 3 on Task T3: -203.10
+  Model 3 on Task T4: -123.20
+
+===============================
+      Trial 10: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__9__1764630951
+===============================
+
+Evaluating checkpoint 0: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__9__1764630951/episode_300.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 0 on Task T1: -196.30
+  Model 0 on Task T2: -182.05
+  Model 0 on Task T3: -282.50
+  Model 0 on Task T4: -176.85
+
+Evaluating checkpoint 1: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__9__1764630951/episode_600.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 1 on Task T1: -144.55
+  Model 1 on Task T2: -118.45
+  Model 1 on Task T3: -181.35
+  Model 1 on Task T4: -125.55
+
+Evaluating checkpoint 2: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__9__1764630951/episode_900.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 2 on Task T1: -150.00
+  Model 2 on Task T2: -115.90
+  Model 2 on Task T3: -216.70
+  Model 2 on Task T4: -134.75
+
+Evaluating checkpoint 3: /media/nine/HD_1/HD_2_from_seven/Yann/robotics/COMP4082_ARS/scratch/runs/Acrobot-v1__parseval__9__1764630951/episode_1200.pth
+[TaskManager] Switched to Task 1: {'g': 11.0, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.5, 'LINK_MASS_2': 2.0, 'LINK_MOI': 1.5}
+[TaskManager] Switched to Task 2: {'g': 25.0, 'MAX_TORQUE': 0.8, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.5}
+[TaskManager] Switched to Task 3: {'g': 7.0, 'MAX_TORQUE': 1.2, 'LINK_LENGTH_1': 2.0, 'LINK_LENGTH_2': 1.0}
+[TaskManager] Switched to Task 4: {'g': 9.8, 'MAX_TORQUE': 1.0, 'LINK_MASS_1': 1.0, 'LINK_MASS_2': 1.0, 'LINK_LENGTH_1': 1.0, 'LINK_LENGTH_2': 1.0}
+  Model 3 on Task T1: -141.55
+  Model 3 on Task T2: -118.20
+  Model 3 on Task T3: -178.45
+  Model 3 on Task T4: -122.75
+
+
+=====================================
+        MEAN FORGETTING TABLE
+=====================================
+Task | T1 | T2 | T3 | T4
+------------------------
+T1 |  n/a | -155.110 | -160.575 | -165.615 |
+T2 |  n/a | n/a | -6.965 | -10.900 |
+T3 |  n/a | n/a | n/a | 5.875 |
+T4 |  n/a | n/a | n/a | n/a |

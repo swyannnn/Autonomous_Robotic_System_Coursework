@@ -16,6 +16,34 @@ CartPole-v1:
     masspole: 3.0
     force_mag: 5.0
 
+Acrobot-v1:
+  0:
+    g: 11.0
+    MAX_TORQUE: 1.0  # weakest actuator
+    LINK_MASS_1: 1.5
+    LINK_MASS_2: 2.0
+    LINK_MOI: 1.5    # higher rotational inertia
+
+  1:
+    g: 25.0          # heavier gravity → harder swing-up
+    MAX_TORQUE: 0.8  # weaker actuator
+    LINK_MASS_1: 1.0
+    LINK_MASS_2: 1.5
+
+  2:
+    g: 7.0           # easier gravity
+    MAX_TORQUE: 1.2  # stronger actuator
+    LINK_LENGTH_1: 2.0
+    LINK_LENGTH_2: 1.0
+    
+  3:
+    g: 9.8
+    MAX_TORQUE: 1.0
+    LINK_MASS_1: 1.0
+    LINK_MASS_2: 1.0
+    LINK_LENGTH_1: 1.0
+    LINK_LENGTH_2: 1.0
+
 MountainCarContinuous-v0:
   0:   # Standard Right Goal
     power: 0.0015

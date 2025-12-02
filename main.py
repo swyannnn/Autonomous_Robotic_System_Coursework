@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from eval import evaluate_agent
 from utils import make_env
 from tasks import TaskManager
-from agent import BasePPOAgent, ParsevalPPOAgent
+from agent import PPOAgent
 import gymnasium as gym
 import numpy as np
 import torch
@@ -97,6 +97,8 @@ class Args:
     """the number of iterations (computed in runtime)"""
 
     # for evaluation
+    do_eval: bool = True
+    """whether to evaluate the agent periodically"""
     eval_episodes: int = 10
     """number of episodes to test the agent during evaluation"""
     stable_hits_required: int = 10
@@ -146,9 +148,10 @@ if __name__ == "__main__":
     env = make_env(args.env_id, args.capture_video, run_name)()
 
     if args.algorithm == "base":
-        agent = BasePPOAgent(env).to(device)
+        # agent = BasePPOAgent(env).to(device)
+        agent = PPOAgent(env, add_diag_layer=False).to(device)
     elif args.algorithm == "parseval":
-        agent = ParsevalPPOAgent(env, net_width=args.net_width,
+        agent = PPOAgent(env, net_width=args.net_width,
                                 add_diag_layer=args.add_diag_layer,
                                 activation=args.activation,
                                 input_scale=args.input_scale,
@@ -191,9 +194,13 @@ if __name__ == "__main__":
         success_threshold = 90
     elif args.env_id == "Pendulum-v1":
         success_threshold = -200
+    elif args.env_id == "Acrobot-v1":
+        success_threshold = -100
+    else:
+        raise NotImplementedError(f"Success threshold not defined for env {args.env_id}")
 
     for iteration in range(1, args.num_iterations + 1):
-        if episode_count <= 8000:
+        if episode_count <= 2400:
             # Annealing the rate if instructed to do so.
             if args.anneal_lr:
                 frac = 1.0 - (iteration - 1.0) / args.num_iterations
@@ -233,6 +240,14 @@ if __name__ == "__main__":
                     writer.add_scalar("charts/episodic_length", info["episode"]["l"], episode_count)
                     writer.add_scalar("charts/global_step_return", info["episode"]["r"], global_step)
                     
+                    logged_values = agent.get_log_quantities()
+                    for key, value in logged_values.items():
+                        if "actor_cosine_sim" in key or "critic_cosine_sim" in key:
+                            for layer_idx, layer_value in enumerate(value):
+                                writer.add_scalar(f"agent/{key}_layer_{layer_idx+1}", layer_value, episode_count)
+                        if isinstance(value, (float, int, np.floating, np.integer)):
+                            writer.add_scalar(f"agent/{key}", value, episode_count)
+
                     if episode_count % args.task_switch_episode_interval == 0:
                         prev_task = current_task
                         current_task = (current_task + 1) % args.num_tasks
@@ -248,66 +263,67 @@ if __name__ == "__main__":
                         # ==================================
                         # 2. RUN EVALUATION ON *ALL* TASKS
                         # ==================================
-                        print("Evaluating on all tasks...")
-                        task_returns = []
-                        task_success = []
-                        forgetting_scores = []
-                        for task_id in range(args.num_tasks):
-                            print(f"Evaluating on Task {task_id + 1}...")
+                        if args.do_eval:
+                            print("Evaluating on all tasks...")
+                            task_returns = []
+                            task_success = []
+                            forgetting_scores = []
+                            for task_id in range(args.num_tasks):
+                                print(f"Evaluating on Task {task_id + 1}...")
 
-                            mean_return, success_rate = evaluate_agent(
-                                agent, make_env, args, device,
-                                success_threshold=success_threshold,
-                                task_manager=task_manager,
-                                task_id=task_id,
-                                eval_episodes=args.eval_episodes
-                            )
+                                mean_return, success_rate = evaluate_agent(
+                                    agent, make_env, args, device,
+                                    success_threshold=success_threshold,
+                                    task_manager=task_manager,
+                                    task_id=task_id,
+                                    eval_episodes=args.eval_episodes
+                                )
 
-                            # ---------------------------
-                            # Log direct performance
-                            # ---------------------------
-                            writer.add_scalar(f"eval/task_{task_id}/mean_return", mean_return, episode_count)
-                            writer.add_scalar(f"eval/task_{task_id}/success_rate", success_rate, episode_count)
+                                # ---------------------------
+                                # Log direct performance
+                                # ---------------------------
+                                writer.add_scalar(f"eval/task_{task_id}/mean_return", mean_return, episode_count)
+                                writer.add_scalar(f"eval/task_{task_id}/success_rate", success_rate, episode_count)
 
-                            task_returns.append(mean_return)
-                            task_success.append(success_rate)
+                                task_returns.append(mean_return)
+                                task_success.append(success_rate)
 
-                            # ---------------------------
-                            # Update performance matrix
-                            # ---------------------------
-                            performance_matrix[task_id][prev_task] = mean_return
+                                # ---------------------------
+                                # Update performance matrix
+                                # ---------------------------
+                                performance_matrix[task_id][prev_task] = mean_return
 
-                            # ---------------------------
-                            # Compute Forgetting BEFORE updating best_per_task
-                            # ---------------------------
-                            if (
-                                task_seen[task_id]              # Task must have been trained before
-                                and current_cycle > 0           # Skip first cycle
-                                and task_id != prev_task        # Don't compute forgetting for task just trained
-                            ):
-                                forgetting = best_per_task[task_id] - mean_return
-                                forgetting = max(forgetting, 0.0)   # prevent negative forgetting due to noise
-                            else:
-                                forgetting = 0.0
+                                # ---------------------------
+                                # Compute Forgetting BEFORE updating best_per_task
+                                # ---------------------------
+                                if (
+                                    task_seen[task_id]              # Task must have been trained before
+                                    and current_cycle > 0           # Skip first cycle
+                                    and task_id != prev_task        # Don't compute forgetting for task just trained
+                                ):
+                                    forgetting = best_per_task[task_id] - mean_return
+                                    forgetting = max(forgetting, 0.0)   # prevent negative forgetting due to noise
+                                else:
+                                    forgetting = 0.0
 
-                            writer.add_scalar(f"eval/task_{task_id}/forgetting", forgetting, episode_count)
-                            forgetting_scores.append(forgetting)
+                                writer.add_scalar(f"eval/task_{task_id}/forgetting", forgetting, episode_count)
+                                forgetting_scores.append(forgetting)
 
-                            # ---------------------------
-                            # Now update best_per_task AFTER forgetting calculation
-                            # ---------------------------
-                            best_per_task[task_id] = max(best_per_task[task_id], mean_return)
-                            import json
-                            save_path = f"runs/{run_name}/best_per_task.json"
-                            with open(save_path, "w") as f:
-                                json.dump(best_per_task, f, indent=4)
-                            # ---------------------------
-                            # Convergence tracking
-                            # ---------------------------
-                            if success_rate == 1.0:
-                                task_stable_hits[task_id] += 1
-                            else:
-                                task_stable_hits[task_id] = 0
+                                # ---------------------------
+                                # Now update best_per_task AFTER forgetting calculation
+                                # ---------------------------
+                                best_per_task[task_id] = max(best_per_task[task_id], mean_return)
+                                import json
+                                save_path = f"runs/{run_name}/best_per_task.json"
+                                with open(save_path, "w") as f:
+                                    json.dump(best_per_task, f, indent=4)
+                                # ---------------------------
+                                # Convergence tracking
+                                # ---------------------------
+                                if success_rate == 1.0:
+                                    task_stable_hits[task_id] += 1
+                                else:
+                                    task_stable_hits[task_id] = 0
 
                             
                         # check if all tasks have converged

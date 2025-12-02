@@ -113,8 +113,8 @@ def plot_comparison(
 
 if __name__ == "__main__":
     # Example usage section (edit paths)
-    base_steps, base_vals = load_runs("runs/CartPole-v1__base__*", "charts/episodic_return")
-    p_steps, p_vals = load_runs("runs/CartPole-v1__parseval__*", "charts/episodic_return")
+    base_steps, base_vals = load_runs("runs/Acrobot-v1__base__*", "charts/episodic_return")
+    p_steps, p_vals = load_runs("runs/Acrobot-v1__parseval__*", "charts/episodic_return")
 
     x, base_interp = interpolate(base_steps, base_vals)
     _, parseval_interp = interpolate(p_steps, p_vals)

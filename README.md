@@ -12,3 +12,7 @@ https://arxiv.org/pdf/1706.08840
 (Pdb) vars(env.unwrapped)
 {'max_speed': 8, 'max_torque': 2.0, 'dt': 0.05, 'g': 10.0, 'm': 1.0, 'l': 1.0, 
 'render_mode': None, 'screen_dim': 500, 'screen': None, 'clock': None, 'isopen': True, 'action_space': Box(-2.0, 2.0, (1,), float32), 'observation_space': Box([-1. -1. -8.], [1. 1. 8.], (3,), float32), 'spec': EnvSpec(id='Pendulum-v1', entry_point='gymnasium.envs.classic_control.pendulum:PendulumEnv', reward_threshold=None, nondeterministic=False, max_episode_steps=None, order_enforce=False, autoreset=False, disable_env_checker=True, apply_api_compatibility=False, kwargs={}, namespace=None, name='Pendulum', version=1, additional_wrappers=(), vector_entry_point=None)}
+
+
+acrobot:
+{'render_mode': None, 'screen': None, 'clock': None, 'isopen': True, 'observation_space': Box([ -1.        -1.        -1.        -1.       -12.566371 -28.274334], [ 1.        1.        1.        1.       12.566371 28.274334], (6,), float32), 'action_space': Discrete(3), 'state': None, 'spec': EnvSpec(id='Acrobot-v1', entry_point='gymnasium.envs.classic_control.acrobot:AcrobotEnv', reward_threshold=-100.0, nondeterministic=False, max_episode_steps=None, order_enforce=False, autoreset=False, disable_env_checker=True, apply_api_compatibility=False, kwargs={}, namespace=None, name='Acrobot', version=1, additional_wrappers=(), vector_entry_point=None)}
