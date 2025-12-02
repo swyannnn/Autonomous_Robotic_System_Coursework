@@ -7,11 +7,17 @@ import os
 import json
 import csv
 
-
-# ============================================================
-# LOAD A SCALAR TAG FROM A SINGLE EVENT FILE
-# ============================================================
 def load_scalar(event_file, tag):
+    """
+    Loads a scalar tag from a TensorBoard event file.
+    Returns steps and values as numpy arrays.
+    Args:
+        event_file (str): Path to the TensorBoard event file.
+        tag (str): The scalar tag to load.
+    Returns:
+        steps (np.ndarray): Array of steps.
+        values (np.ndarray): Array of scalar values.
+    """
     ea = EventAccumulator(event_file)
     ea.Reload()
 
@@ -24,10 +30,16 @@ def load_scalar(event_file, tag):
     return steps, values
 
 
-# ============================================================
-# LOAD ALL RUNS AND EXTRACT THE TAGS
-# ============================================================
 def load_runs(run_dirs, tag):
+    """
+    Loads the specified scalar tag from multiple TensorBoard event files.
+    Args:
+        run_dirs (list of str): List of directories containing TensorBoard event files.
+        tag (str): The scalar tag to load.
+    Returns:
+        all_steps (list of np.ndarray): List of steps arrays for each run.
+        all_values (list of np.ndarray): List of values arrays for each run.
+    """
     all_steps, all_values = [], []
 
     for run in run_dirs:
@@ -47,12 +59,16 @@ def load_runs(run_dirs, tag):
 
     return all_steps, all_values
 
-
-# ============================================================
-# FIND EVALUATION POINTS (EPISODE COUNTS WHERE SWITCH OCCURS)
-# ============================================================
 def extract_switch_points(steps, interval, cycles):
-    """Returns the steps closest to switch boundaries: 300, 600, ..."""
+    """
+    Finds the closest steps to the target evaluation points.
+    Args:
+        steps (np.ndarray): Array of steps.
+        interval (int): Interval between tasks.
+        cycles (int): Number of tasks.
+    Returns:
+        switch_points (list of int): List of steps closest to each target evaluation point.
+    """
     switch_points = []
     targets = np.arange(interval, interval * (cycles + 1), interval)
 
@@ -62,11 +78,17 @@ def extract_switch_points(steps, interval, cycles):
     return switch_points
 
 
-# ============================================================
-# BUILD PERFORMANCE MATRIX FOR ONE RUN
-# ============================================================
 def build_performance_matrix(run_dir, num_tasks, interval, cycles):
-    perf_mat = np.zeros((num_tasks, cycles))  # task × switch_index
+    """
+    Builds a performance matrix from TensorBoard logs for a single run.
+    Args:
+        run_dir (str): Directory containing TensorBoard event files.
+        num_tasks (int): Number of tasks.
+        interval (int): Interval between tasks.
+        cycles (int): Number of tasks.
+    Returns:
+        perf_mat (np.ndarray): Performance matrix of shape (num_tasks, cycles)."""
+    perf_mat = np.zeros((num_tasks, cycles))
 
     event_files = glob.glob(os.path.join(run_dir, "events.*"))
     if len(event_files) == 0:
@@ -77,7 +99,6 @@ def build_performance_matrix(run_dir, num_tasks, interval, cycles):
     ea = EventAccumulator(event_file)
     ea.Reload()
 
-    # For each task t, load scalar
     for t in range(num_tasks):
         tag = f"eval/task_{t}/mean_return"
         if tag not in ea.Tags().get("scalars", []):
@@ -88,7 +109,6 @@ def build_performance_matrix(run_dir, num_tasks, interval, cycles):
         steps = np.array([e.step for e in events])
         values = np.array([e.value for e in events])
 
-        # find switch episode points
         switch_points = extract_switch_points(steps, interval, cycles)
 
         for i, sp in enumerate(switch_points):
@@ -97,139 +117,114 @@ def build_performance_matrix(run_dir, num_tasks, interval, cycles):
 
     return perf_mat
 
-
-# ============================================================
-# CALCULATE CL METRICS: FWT, BWT, CF, SPB
-# ============================================================
 def compute_cl_metrics(perf):
     """
-    perf = [num_tasks × cycles]
-    perf[t][i] = performance on task t after training task i
+    Computes Continual Learning metrics from the performance matrix.
+    Args:
+        perf (np.ndarray): Performance matrix of shape (T, C).
+    Returns:
+        metrics (dict): Dictionary containing CL metrics.
     """
-
     T, C = perf.shape
 
-    # diagonal: after training the task itself
     diag = np.array([perf[t, t] for t in range(T)])
-
-    # final: after last cycle
     final = perf[:, C - 1]
 
-    # --- BWT (Backward Transfer) ---
-    bwt_values = final[:T - 1] - diag[:T - 1]
-    BWT = bwt_values.mean()
+    bwt_per_task = final[:T - 1] - diag[:T - 1]
+    BWT = bwt_per_task.mean()
 
-    # --- Catastrophic Forgetting (CF) ---
-    CF = -BWT  # definition: forgetting = -BWT (common CL definition)
-    CF_tasks = -bwt_values
+    CF = -BWT
+    CF_tasks = -bwt_per_task
 
-    # --- FWT (Forward Transfer) ---
-    # performance on task j *before* it was trained: perf[j][j-1]
-    # baseline = 0 (CartPole random policy)
-    fwt_values = []
-    for j in range(1, T):
-        fwt_values.append(perf[j, j - 1])  # before training j
-
+    fwt_values = [perf[j, j - 1] for j in range(1, T)]
     FWT = np.mean(fwt_values)
 
-    # --- Stability–Plasticity Balance (SPB) ---
     SPB = FWT - abs(BWT)
 
     return {
+        "diag": diag.tolist(),
+        "final": final.tolist(),
         "FWT": float(FWT),
         "BWT": float(BWT),
         "CF": float(CF),
         "SPB": float(SPB),
         "CF_per_task": CF_tasks.tolist(),
-        "BWT_per_task": bwt_values.tolist(),
+        "BWT_per_task": bwt_per_task.tolist(),
     }
 
-
-# ============================================================
-# PLOT AVERAGED EPISODIC RETURN (YOUR ORIGINAL PLOT)
-# ============================================================
 def interpolate(all_steps, all_values, num_points=2000):
+    """
+    Interpolates multiple runs to a common x-axis.
+    Args:
+        all_steps (list of np.ndarray): List of steps arrays for each run.
+        all_values (list of np.ndarray): List of values arrays for each run.
+        num_points (int): Number of points for interpolation.
+    Returns:
+        common_x (np.ndarray): Common x-axis.
+        interpolated (np.ndarray): Interpolated values of shape (num_runs, num_points).
+    """
     xmin = max(s[0] for s in all_steps)
     xmax = min(s[-1] for s in all_steps)
     common_x = np.linspace(xmin, xmax, num_points)
     interpolated = [np.interp(common_x, s, v) for s, v in zip(all_steps, all_values)]
     return common_x, np.stack(interpolated)
 
-
 def plot_task_segments(
     x,
     runs,
-    interval,
     output,
     title,
-    num_tasks=4,
-    cycles=None,
     ma_window=51,
 ):
+    """
+    Plots the mean and standard deviation of runs with task segments.
+    Args:
+        x (np.ndarray): Common x-axis.
+        runs (np.ndarray): Interpolated values of shape (num_runs, num_points).
+        interval (int): Interval between tasks.
+        output (str): Output file path for the plot.
+        title (str): Title of the plot.
+        num_tasks (int): Number of tasks.
+        cycles (int): Number of tasks.
+        ma_window (int): Window size for moving average.
+    """
     mean = runs.mean(axis=0)
     std = runs.std(axis=0)
 
-    max_episode_data = x[-1]
-    if cycles is None:
-        cycles = int(np.ceil(max_episode_data / interval))
+    # ----- SAVE MEAN/STDEV -----
+    json.dump({
+        "x": x.tolist(),
+        "mean": mean.tolist(),
+        "std": std.tolist(),
+    }, open(output.replace(".png", "_stats.json"), "w"), indent=4)
 
-    max_episode_plot = cycles * interval
-    mask_all = x <= max_episode_plot
-    x_plot = x[mask_all]
-    mean_plot = mean[mask_all]
-    std_plot = std[mask_all]
+    np.save(output.replace(".png", "_runs.npy"), runs)
 
+    print(f"[SAVED] episodic return stats → {output.replace('.png','_stats.json')}")
+    print(f"[SAVED] interpolated runs → {output.replace('.png','_runs.npy')}")
+
+    # ----- PLOT -----
     plt.figure(figsize=(10, 6))
-    colors = plt.cm.tab10(np.linspace(0, 1, num_tasks))
-    task_labels_added = set()
-
-    for cycle in range(cycles):
-        t = cycle % num_tasks
-        start_ep = cycle * interval
-        end_ep = (cycle + 1) * interval
-
-        mask = (x_plot >= start_ep) & (x_plot < end_ep)
-        if mask.sum() == 0:
-            continue
-
-        label = f"Task {t}" if f"Task {t}" not in task_labels_added else None
-        task_labels_added.add(f"Task {t}")
-
-        plt.plot(
-            x_plot[mask],
-            mean_plot[mask],
-            color=colors[t],
-            linewidth=2,
-            label=label,
-        )
-        plt.fill_between(
-            x_plot[mask],
-            mean_plot[mask] - std_plot[mask],
-            mean_plot[mask] + std_plot[mask],
-            color=colors[t],
-            alpha=0.15,
-        )
-
-    if ma_window > 1 and ma_window < len(mean_plot):
+    mean_smoothed = mean
+    if ma_window < len(mean):
         kernel = np.ones(ma_window) / ma_window
-        ma = np.convolve(mean_plot, kernel, mode="valid")
-        x_ma = x_plot[ma_window - 1:]
-        plt.plot(x_ma, ma, color="black", linewidth=2, label="Moving Avg")
+        mean_smoothed = np.convolve(mean, kernel, mode="valid")
+        x_ma = x[ma_window - 1:]
+        plt.plot(x_ma, mean_smoothed, label="Moving Avg", color="black")
 
-    plt.xticks(np.arange(0, max_episode_plot + interval, interval))
-    plt.grid(alpha=0.3)
+    plt.fill_between(x, mean - std, mean + std, alpha=0.2)
+    plt.plot(x, mean, label="Mean", color="blue")
+
     plt.title(title)
     plt.xlabel("Episode")
-    plt.ylabel("Episodic Return")
-    plt.legend(title="Task Intervals")
-
-    plt.tight_layout()
+    plt.ylabel("Return")
+    plt.grid(alpha=0.3)
     plt.savefig(output, dpi=300)
-    print(f"[SAVED] {output}")
+    print(f"[SAVED] plot → {output}")
 
 
 # ============================================================
-# MAIN ENTRY
+# MAIN
 # ============================================================
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -243,51 +238,67 @@ if __name__ == "__main__":
     parser.add_argument("--compute_metrics", action="store_true")
     args = parser.parse_args()
 
+    # ensure output directory exists
+    os.makedirs(os.path.dirname(args.output), exist_ok=True)
+
     # expand glob
     run_dirs = []
     for p in args.runs:
         run_dirs.extend(glob.glob(p))
     run_dirs = sorted(run_dirs)
 
-    # ===== PLOT =====
     steps_list, values_list = load_runs(run_dirs, args.tag)
     x, runs_interp = interpolate(steps_list, values_list)
+
     title = args.title if args.title else args.tag
-    plot_task_segments(x, runs_interp, args.interval, args.output, title, cycles=args.cycles)
+    plot_task_segments(x, runs_interp, args.output, title, ma_window=args.ma_window)
 
-    # ===== COMPUTE METRICS =====
     if args.compute_metrics:
-        print("\n[Computing Continual Learning Metrics...]")
-
         matrices = []
         for r in run_dirs:
             mat = build_performance_matrix(r, num_tasks=4, interval=args.interval, cycles=args.cycles)
             if mat is not None:
                 matrices.append(mat)
 
-        if len(matrices) == 0:
-            print("[ERROR] No matrices extracted.")
-            exit()
-
         avg_mat = np.mean(np.stack(matrices), axis=0)
+        np.savetxt(f"{os.path.dirname(args.output)}/performance_matrix.csv", avg_mat, delimiter=",")
+
         metrics = compute_cl_metrics(avg_mat)
+        json.dump(metrics, open(f"{os.path.dirname(args.output)}/cl_metrics.json", "w"), indent=4)
 
-        # Save CSV
-        np.savetxt("performance_matrix.csv", avg_mat, delimiter=",")
-        with open("metrics_summary.json", "w") as f:
-            json.dump(metrics, f, indent=4)
+        print("[SAVED] performance_matrix.csv, cl_metrics.json")
 
-        print("\n=== METRICS SUMMARY ===")
-        print(json.dumps(metrics, indent=4))
+# example usage:
+# python plot_tb_scalars.py --runs "runs/CartPole-v1__base_*" --tag "charts/episodic_return" \
+# --output "results_export/CartPole-v1/base/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
+# --title "CartPole-v1 Base Algorithm" 
 
+# python plot_tb_scalars.py --runs "runs/CartPole-v1__parseval_*" --tag "charts/episodic_return" \
+# --output "results_export/CartPole-v1/parseval/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
+# --title "CartPole-v1 Parseval Algorithm" 
 
-# Example usage:
-# python plot_tb_scalars.py \
-#     --runs runs_exp/Pendulum-v1__base__* \
-#     --tag charts/episodic_return \
-#     --output episodic_return_base_pendulum.png \
-#     --interval 300 \
-#     --cycles 4 \
-#     --ma_window 51 \
-#     --title "Pendulum-v1 (PPO Agent with Base Algorithm)" \
-#     --compute_metrics 
+# python plot_tb_scalars.py --runs "runs/Acrobot-v1__base_*" --tag "charts/episodic_return" \
+# --output "results_export/Acrobot-v1/base/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
+# --title "Acrobot-v1 Base Algorithm" 
+
+# python plot_tb_scalars.py --runs "runs/Acrobot-v1__parseval_*" --tag "charts/episodic_return" \
+# --output "results_export/Acrobot-v1/parseval/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
+# --title "Acrobot-v1 Parseval Algorithm" 
+
+# FOR LAYER COSINE SIMILARITY:
+
+# python plot_tb_scalars.py --runs "runs/Acrobot-v1__parseval_*" --tag "agent/actor_cosine_sim_layer_2" \
+# --output "results_export/Acrobot-v1/parseval/avg_actor_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
+# --title "Acrobot-v1 Parseval Algorithm" 
+
+# python plot_tb_scalars.py --runs "runs/Acrobot-v1__base_*" --tag "agent/actor_cosine_sim_layer_2" \
+# --output "results_export/Acrobot-v1/base/avg_actor_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
+# --title "Acrobot-v1 Base Algorithm" 
+
+# python plot_tb_scalars.py --runs "runs/Acrobot-v1__parseval_*" --tag "agent/actor_cosine_sim_layer_2" \
+# --output "results_export/Acrobot-v1/parseval/avg_actor_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
+# --title "Acrobot-v1 Parseval Algorithm" 
+
+# python plot_tb_scalars.py --runs "runs/Acrobot-v1__base_*" --tag "agent/actor_cosine_sim_layer_2" \
+# --output "results_export/Acrobot-v1/base/avg_actor_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
+# --title "Acrobot-v1 Base Algorithm" 

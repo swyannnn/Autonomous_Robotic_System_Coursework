@@ -97,7 +97,7 @@ class Args:
     """the number of iterations (computed in runtime)"""
 
     # for evaluation
-    do_eval: bool = True
+    do_eval: bool = False
     """whether to evaluate the agent periodically"""
     eval_episodes: int = 10
     """number of episodes to test the agent during evaluation"""
@@ -324,8 +324,11 @@ if __name__ == "__main__":
                                     task_stable_hits[task_id] += 1
                                 else:
                                     task_stable_hits[task_id] = 0
-
-                            
+                                        
+                            writer.add_scalar("eval/avg_mean_return", np.mean(task_returns), episode_count)
+                            writer.add_scalar("eval/avg_success_rate", np.mean(task_success), episode_count)
+                            writer.add_scalar("eval/avg_forgetting", np.mean(forgetting_scores), episode_count)
+                        
                         # check if all tasks have converged
                         if all([task_stable_hits[t] >= args.stable_hits_required for t in range(args.num_tasks)]):
                             if convergence_episode is None:
@@ -333,9 +336,6 @@ if __name__ == "__main__":
                                 writer.add_scalar("eval/convergence_episode", convergence_episode, episode_count)
                                 writer.add_text("eval/convergence_info", f"Converged at episode {convergence_episode}", episode_count)
                                 print(f"[CONVERGED] at episode {convergence_episode}")
-                        writer.add_scalar("eval/avg_mean_return", np.mean(task_returns), episode_count)
-                        writer.add_scalar("eval/avg_success_rate", np.mean(task_success), episode_count)
-                        writer.add_scalar("eval/avg_forgetting", np.mean(forgetting_scores), episode_count)
 
                         # save the model
                         torch.save(agent.state_dict(), f"runs/{run_name}/episode_{episode_count}.pth")
