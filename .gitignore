@@ -1,5 +1,3 @@
 runs/
-runs_exp/
 __pycache__/
 wandb/
-runs_pendulum/

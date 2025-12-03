@@ -216,3 +216,12 @@ if __name__ == "__main__":
 # --title "Actor Cosine Similarity Layer 2" \
 # --output "results/CartPole-v1/compare_ci_actor_cosine_sim_layer_2.png" \
 # --tag "actor_cosine_sim_layer_2"
+
+# python plot_compare_ci.py \
+# --base_path "results/CartPole-v1/base" \
+# --parseval_path "results/CartPole-v1/parseval" \
+# --interval 300 \
+# --title "Acrobot Task 3" \
+# --output "results_tmp/episodic_return_task_3.png" \
+# --tag "episodic_return" \
+# --max_x 300

@@ -17,7 +17,7 @@ CartPole-v1:
     force_mag: 5.0
 
 Acrobot-v1:
-  0:
+  1:
     g: 11.0
     MAX_TORQUE: 1.0  # weakest actuator
     LINK_MASS_1: 1.5
@@ -30,7 +30,7 @@ Acrobot-v1:
     LINK_MASS_1: 1.0
     LINK_MASS_2: 1.5
 
-  2:
+  0:
     g: 7.0           # easier gravity
     MAX_TORQUE: 1.2  # stronger actuator
     LINK_LENGTH_1: 2.0

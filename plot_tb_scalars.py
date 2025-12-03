@@ -269,6 +269,9 @@ if __name__ == "__main__":
         print("[SAVED] performance_matrix.csv, cl_metrics.json")
 
 # example usage:
+
+# FOR AVERAGE EPISODIC RETURN:
+
 # python plot_tb_scalars.py --runs "runs/CartPole-v1__base_*" --tag "charts/episodic_return" \
 # --output "results/CartPole-v1/base/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
 # --title "CartPole-v1 Base Algorithm" 
@@ -302,3 +305,25 @@ if __name__ == "__main__":
 # python plot_tb_scalars.py --runs "runs/CartPole-v1__base_*" --tag "agent/critic_cosine_sim_layer_2" \
 # --output "results/CartPole-v1/base/avg_critic_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
 # --title "CartPole-v1 Base Algorithm" 
+
+
+
+
+
+
+
+# python plot_tb_scalars.py --runs "runs_exp1/Acrobot-v1__base__False_*" --tag "charts/episodic_return" \
+# --output "results_task_3/clean2/Acrobot-v1/base/avg_episodic_return.png" --interval 300 --cycles 1 \
+# --title "Acrobot-v1 Base Algorithm" 
+
+# python plot_tb_scalars.py --runs "runs_exp1/Acrobot-v1__parseval__False_*" --tag "charts/episodic_return" \
+# --output "results_task_3/clean2/Acrobot-v1/parseval/avg_episodic_return.png" --interval 300 --cycles 1 \
+# --title "Acrobot-v1 Parseval Algorithm" 
+
+# python plot_tb_scalars.py --runs "runs_exp/Acrobot-v1__base__True_*" --tag "charts/episodic_return" \
+# --output "results_task_3/600_episode/Acrobot-v1/base/avg_episodic_return.png" --interval 300 --cycles 1 \
+# --title "Acrobot-v1 Base Algorithm" 
+
+# python plot_tb_scalars.py --runs "runs_exp/Acrobot-v1__parseval__True_*" --tag "charts/episodic_return" \
+# --output "results_task_3/600_episode/Acrobot-v1/parseval/avg_episodic_return.png" --interval 300 --cycles 1 \
+# --title "Acrobot-v1 Parseval Algorithm" 
