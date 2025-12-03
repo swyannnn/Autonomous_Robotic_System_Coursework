@@ -33,7 +33,7 @@ class Args:
     """the entity (team) of wandb's project"""
     capture_video: bool = False
     """whether to capture videos of the agent performances (check out `videos` folder)"""
-    save_path: str = "runs_exp1"
+    save_path: str = "runs"
     """where to save the runs"""
 
     # Algorithm specific arguments
