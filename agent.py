@@ -1,5 +1,4 @@
 import torch
-import gymnasium as gym
 from gymnasium import spaces
 import torch.nn as nn
 import numpy as np
@@ -9,6 +8,16 @@ from torch.distributions.normal import Normal
 from utils import ScaleLayer, DiagLinear, layer_init
 
 class PPOAgent(nn.Module):
+    """
+    Proximal Policy Optimization (PPO) agent with actor-critic architecture.
+    Args:
+        envs: Gym environment or vectorized SyncVectorEnv
+        net_width (int): Number of units in hidden layers
+        add_diag_layer (bool): Whether to add DiagLinear layers
+        activation (str): Activation function to use ('tanh' supported)
+        input_scale (float): Initial scaling factor for input layer
+        learnable_input_scale (bool): Whether input scaling factor is learnable
+    """
     def __init__(self, envs, net_width=64,
                  add_diag_layer=True, activation='tanh',
                  input_scale=1, learnable_input_scale=False):
@@ -43,10 +52,28 @@ class PPOAgent(nn.Module):
         self.actor_logstd = nn.Parameter(torch.zeros(1, self.actor_output_dim))
         self.build_network(num_hidden)
 
-    def get_value(self, x):
+    def get_value(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Get value estimate from critic network.
+        Args:
+            x: Input state
+        Returns:
+            Value estimate
+        """
         return self.critic(x)
 
-    def _get_action_and_value_continuous(self, x, action=None):
+    def _get_action_and_value_continuous(self, x: torch.Tensor, action: torch.Tensor = None):
+        """
+        Get action and value for continuous action spaces.
+        Args:
+            x: Input state
+            action: Optional action input
+        Returns:
+            action: Sampled or provided action
+            log_prob: Log probability of the action
+            entropy: Entropy of the action distribution
+            value: Value estimate from critic
+        """
         x = torch.atleast_2d(x)
         
         action_mean = self.actor(x)
@@ -63,7 +90,18 @@ class PPOAgent(nn.Module):
             probs = Normal(action_mean, action_std)
         return action, probs.log_prob(action).sum(1), probs.entropy().sum(1), self.critic(x)
 
-    def _get_action_and_value_discrete(self, x, action=None):
+    def _get_action_and_value_discrete(self, x: torch.Tensor, action: torch.Tensor = None):
+        """
+        Get action and value for discrete action spaces.
+        Args:
+            x: Input state
+            action: Optional action input
+        Returns:
+            action: Sampled or provided action
+            log_prob: Log probability of the action
+            entropy: Entropy of the action distribution
+            value: Value estimate from critic
+        """
         logits = self.actor(x)
         probs = Categorical(logits=logits)
         if action is None:
@@ -71,8 +109,12 @@ class PPOAgent(nn.Module):
         action = action.squeeze(-1)
         return action, probs.log_prob(action), probs.entropy(), self.critic(x)
 
-    def build_network(self, num_hidden):
-        ''' '''
+    def build_network(self, num_hidden: int) -> None:
+        """
+        Build actor and critic networks.
+        Args:
+            num_hidden (int): Number of units in hidden layers
+        """
         num_hidden_out = num_hidden
 
         actor_output_dim = self.env.action_space.n if self.discrete_action_space else np.prod(self.env.action_space.shape)
@@ -119,7 +161,14 @@ class PPOAgent(nn.Module):
                 ('linear_output', layer_init(nn.Linear(num_hidden, actor_output_dim), std=0.01)),
             ]))
 
-    def parseval_reg_network(self, named_parameters):
+    def parseval_reg_network(self, named_parameters: object) -> torch.Tensor:
+        """
+        Compute Parseval regularization loss for the network.
+        Args:
+            named_parameters: Named parameters of the network
+        Returns:
+            loss_reg: Parseval regularization loss
+        """
         loss_reg = 0
 
         for name, param in named_parameters:
@@ -143,7 +192,12 @@ class PPOAgent(nn.Module):
                     p='fro') ** 2
         return loss_reg
     
-    def get_log_quantities(self):
+    def get_log_quantities(self) -> dict:
+        """
+        Compute various logging quantities related to gradients and parameters.
+        Returns:
+            dict: A dictionary containing logged values.
+        """
         logged_values = {}
         with torch.no_grad():
             ### Save states for testing later

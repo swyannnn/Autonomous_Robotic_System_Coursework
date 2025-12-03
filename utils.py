@@ -5,7 +5,17 @@ import torch.nn as nn
 import torch
 import numpy as np
 
-def make_env(env_id, capture_video, run_name, max_episode_steps=None):
+def make_env(env_id: str, capture_video: bool, run_name: str, max_episode_steps: int = None) -> callable:
+    """
+    Utility function for creating a Gym environment with optional video capture and episode length limit.
+    Args:
+        env_id (str): The environment ID for Gym.
+        capture_video (bool): Whether to capture video of the environment.
+        run_name (str): The name of the run for video saving.
+        max_episode_steps (int, optional): Maximum number of steps per episode. Defaults to None.
+    Returns:
+        function: A function that creates and returns the Gym environment when called.
+    """
     def thunk():
         if capture_video:
             env = gym.make(env_id, render_mode="rgb_array")
@@ -69,6 +79,9 @@ class DiagLinear(nn.Module):
         return f'in_features={self.in_features}, out_features={self.out_features}, bias={self.bias is not None}'
 
 class ScaleLayer(nn.Module):
+    """
+    Layer that scales the input by a learnable or fixed factor.
+    """
     def __init__(self, init_value=1.0, learnable=False):
         super().__init__()
         self.scale = nn.Parameter(torch.FloatTensor([init_value]))
@@ -77,13 +90,16 @@ class ScaleLayer(nn.Module):
     def forward(self, input):
         return input * self.scale
 
-def layer_init(layer, std=np.sqrt(2), bias_const=0.0):
+def layer_init(layer: nn.Module, std: float = np.sqrt(2), bias_const: float = 0.0) -> nn.Module :
+    """
+    Initialize a layer with orthogonal weights and constant bias.
+    Args:
+        layer: The layer to initialize.
+        std: Standard deviation for the orthogonal initialization.
+        bias_const: Constant value for bias initialization.
+    Returns:
+        The initialized layer.
+    """
     torch.nn.init.orthogonal_(layer.weight, std)
     torch.nn.init.constant_(layer.bias, bias_const)
     return layer
-
-def format_obs(x):
-    x = torch.tensor(x, dtype=torch.float32)
-    if x.ndim == 1:
-        x = x.unsqueeze(0)   # convert (obs_dim,) -> (1, obs_dim)
-    return x

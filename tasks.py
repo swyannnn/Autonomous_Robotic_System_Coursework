@@ -1,7 +1,12 @@
 import yaml
 
-def set_task_cartpole_parameters(env, params):
-    """Apply physics modifications to CartPole."""
+def set_task_cartpole_parameters(env: object, params: dict) -> None:
+    """
+    Apply physics modifications to CartPole.
+    Args:
+        env: Gymnasium CartPole environment
+        params: Dictionary of parameters to modify
+    """
 
     u = env.unwrapped
 
@@ -16,8 +21,13 @@ def set_task_cartpole_parameters(env, params):
     u.total_mass = u.masspole + u.masscart
     u.polemass_length = u.masspole * u.length
 
-def set_task_acrobot_parameters(env, params):
-    """Apply physics modifications to Acrobot (Gymnasium)."""
+def set_task_acrobot_parameters(env: object, params: dict) -> None:
+    """
+    Apply physics modifications to Acrobot (Gymnasium).
+    Args:
+        env: Gymnasium Acrobot environment
+        params: Dictionary of parameters to modify
+    """
 
     u = env.unwrapped
 
@@ -62,6 +72,12 @@ def set_task_acrobot_parameters(env, params):
         u.MAX_VEL_2 = params["MAX_VEL_2"]
 
 class TaskManager:
+    """
+    Manages tasks for a given Gym environment based on a configuration file.
+    Args:
+        env: Gym environment or vectorized SyncVectorEnv
+        task_config_file (str): Path to the YAML file containing task configurations.
+    """
     def __init__(self, env, task_config_file="config/task_config.yaml"):
         """
         Accepts either:
@@ -79,18 +95,18 @@ class TaskManager:
         else:
             raise NotImplementedError(f"TaskManager not implemented for env {env.spec.id}")
 
-    def set_task(self, task_index: int):
+    def set_task(self, task_index: int) -> None:
         """Apply selected task to all envs or single env."""
         params = self.tasks[task_index]
 
         self.set_task_parameters(self.env, params)
         print(f"[TaskManager] Switched to Task {task_index + 1}: {params}")
 
-    def apply_params(self, raw_env, params):
+    def apply_params(self, raw_env: object, params: dict) -> None:
         """Apply task parameters to a given raw env (used in evaluation)."""
         self.set_task_parameters(raw_env, params)
 
-    def log_task_params(self, logger, task_index: int, episode_count: int):
+    def log_task_params(self, logger: object, task_index: int, episode_count: int) -> None:
         """Log current task parameters."""
         params = self.tasks[task_index]
         for param in params:

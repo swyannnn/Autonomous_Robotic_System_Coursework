@@ -1,4 +1,3 @@
-# docs and experiment results can be found at https://docs.cleanrl.dev/rl-algorithms/ppo/#ppopy
 import os
 import random
 import time
@@ -7,7 +6,6 @@ from eval import evaluate_agent
 from utils import make_env
 from tasks import TaskManager
 from agent import PPOAgent
-import gymnasium as gym
 import numpy as np
 import torch
 import torch.nn as nn
@@ -118,7 +116,7 @@ class Args:
     cycle: int = 1
     """number of cycles to run through the tasks"""
 
-if __name__ == "__main__":
+def main():
     args = tyro.cli(Args)
     args.batch_size = int(args.num_envs * args.num_steps)
     args.minibatch_size = int(args.batch_size // args.num_minibatches)
@@ -189,7 +187,6 @@ if __name__ == "__main__":
     episode_count = 0
     target_episode_count = args.cycle * args.num_tasks * args.task_switch_episode_interval
     convergence_episode = None
-    best_task_performance = {t: -np.inf for t in range(args.num_tasks)}
     performance_matrix = np.zeros((args.num_tasks, args.num_tasks))
     task_stable_hits = {t: 0 for t in range(args.num_tasks)}
 
@@ -466,3 +463,6 @@ if __name__ == "__main__":
                 
     env.close()
     writer.close()
+
+if __name__ == "__main__":
+    main()

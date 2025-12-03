@@ -4,7 +4,7 @@ import gymnasium as gym
 import torch
 
 
-def evaluate_agent(agent, make_env, args, device, success_threshold=500, task_manager=None, task_id=None, eval_episodes=10):
+def evaluate_agent(agent: object, make_env: Callable, args: object, device: torch.device, success_threshold: int = 500, task_manager: object = None, task_id: int = None, eval_episodes: int = 10) -> tuple:
     """
     Evaluate the agent for `eval_episodes` episodes.
     Returns:
