@@ -2,43 +2,19 @@ import yaml
 
 def set_task_cartpole_parameters(env, params):
     """Apply physics modifications to CartPole."""
-    gravity = params["gravity"]
-    masspole = params["masspole"]
-    force_mag = params["force_mag"]
-    # length = params["length"]
 
-    # Set mass of pole
-    env.unwrapped.masspole = masspole
-    env.unwrapped.force_mag = force_mag
-    # env.unwrapped.length = length
+    u = env.unwrapped
+
+    if "masspole" in params:
+        u.masspole = params["masspole"]
+    if "force_mag" in params:
+        u.force_mag = params["force_mag"]
+    if "gravity" in params:
+        u.gravity = params["gravity"]
+
     # Need to recompute dependent terms
-    env.unwrapped.total_mass = env.unwrapped.masspole + env.unwrapped.masscart
-    env.unwrapped.polemass_length = env.unwrapped.masspole * env.unwrapped.length
-    env.unwrapped.gravity = gravity
-
-def set_task_mountaincar_parameters(env, params):
-    """Apply physics modifications to MountainCar."""
-    power = params["power"]
-    max_speed = params["max_speed"]
-    goal_position = params["goal_position"]
-    goal_velocity = params["goal_velocity"]
-
-    env.unwrapped.power = power
-    env.unwrapped.max_speed = max_speed
-    env.unwrapped.goal_position = goal_position
-    env.unwrapped.goal_velocity = goal_velocity
-
-def set_task_pendulum_parameters(env, params):
-    """Apply physics modifications to Pendulum."""
-    gravity = params["g"]
-    max_torque = params["max_torque"]
-    mass = params["m"]
-    length = params["l"]
-
-    env.unwrapped.max_torque = max_torque
-    env.unwrapped.m = mass
-    env.unwrapped.l = length
-    env.unwrapped.g = gravity
+    u.total_mass = u.masspole + u.masscart
+    u.polemass_length = u.masspole * u.length
 
 def set_task_acrobot_parameters(env, params):
     """Apply physics modifications to Acrobot (Gymnasium)."""
@@ -86,7 +62,7 @@ def set_task_acrobot_parameters(env, params):
         u.MAX_VEL_2 = params["MAX_VEL_2"]
 
 class TaskManager:
-    def __init__(self, env, task_config_file="task_config.yaml"):
+    def __init__(self, env, task_config_file="config/task_config.yaml"):
         """
         Accepts either:
         - a single gym.Env
@@ -98,10 +74,6 @@ class TaskManager:
 
         if env.spec.id == "CartPole-v1":
             self.set_task_parameters = set_task_cartpole_parameters
-        elif env.spec.id == "MountainCarContinuous-v0":
-            self.set_task_parameters = set_task_mountaincar_parameters
-        elif env.spec.id == "Pendulum-v1":
-            self.set_task_parameters = set_task_pendulum_parameters
         elif env.spec.id == "Acrobot-v1":
             self.set_task_parameters = set_task_acrobot_parameters
         else:

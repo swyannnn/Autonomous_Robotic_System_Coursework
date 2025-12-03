@@ -3,7 +3,7 @@ import numpy as np
 import json
 import glob
 import os
-from agent import PPOAgent, BasePPOAgent
+from agent import PPOAgent
 from utils import make_env
 from tasks import TaskManager
 
@@ -86,7 +86,6 @@ def evaluate_multi_trial_forgetting(
         for checkpoint_id, model_path in enumerate(model_paths):
             print(f"Evaluating checkpoint {checkpoint_id+1}/{num_tasks}: {model_path}")
             agent = PPOAgent(env, add_diag_layer=False).to(device) if algorithm == "base" else PPOAgent(env).to(device)
-            # agent = BasePPOAgent(env).to(device) if algorithm == "base" else PPOAgent(env).to(device)
             agent.load_state_dict(torch.load(model_path, map_location=device))
             agent.eval()
 

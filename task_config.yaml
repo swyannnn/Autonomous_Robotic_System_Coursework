@@ -19,20 +19,20 @@ CartPole-v1:
 Acrobot-v1:
   1:
     g: 11.0
-    MAX_TORQUE: 1.0  # weakest actuator
+    MAX_TORQUE: 1.0  
     LINK_MASS_1: 1.5
     LINK_MASS_2: 2.0
-    LINK_MOI: 1.5    # higher rotational inertia
+    LINK_MOI: 1.5 
 
   1:
-    g: 25.0          # heavier gravity → harder swing-up
-    MAX_TORQUE: 0.8  # weaker actuator
+    g: 25.0  
+    MAX_TORQUE: 0.8 
     LINK_MASS_1: 1.0
     LINK_MASS_2: 1.5
 
   0:
-    g: 7.0           # easier gravity
-    MAX_TORQUE: 1.2  # stronger actuator
+    g: 7.0 
+    MAX_TORQUE: 1.2
     LINK_LENGTH_1: 2.0
     LINK_LENGTH_2: 1.0
     
@@ -43,54 +43,3 @@ Acrobot-v1:
     LINK_MASS_2: 1.0
     LINK_LENGTH_1: 1.0
     LINK_LENGTH_2: 1.0
-
-MountainCarContinuous-v0:
-  0:   # Standard Right Goal
-    power: 0.0015
-    max_speed: 0.07
-    goal_position: 0.45
-    goal_velocity: 0.0
-
-  1:   # HARD LEFT GOAL (balanced difficulty)
-    power: 0.0008
-    max_speed: 0.05
-    goal_position: -100.05
-    goal_velocity: 10000.0
-
-  2:   # Weak Engine Right Goal
-    power: 0.0007
-    max_speed: 0.06
-    goal_position: 0.45
-    goal_velocity: 0.0
-
-  3:   # Slippery Right Hill
-    power: 0.0012
-    max_speed: 0.15
-    goal_position: 0.45
-    goal_velocity: 10.0
-
-
-Pendulum-v1: # g=gravity, m=mass, l=length of rod
-  0:  
-    g: 9.8
-    max_torque: 2.0
-    m: 1.0
-    l: 1.0
-
-  1:  
-    g: 9.8
-    max_torque: 2.0        # weaker but solvable
-    m: 1.0
-    l: 1.5
-
-  2:  
-    g: 9.8           # lower gravity → slower dynamics
-    max_torque: 2.0
-    m: 1.2
-    l: 1.0
-
-  3:  
-    g: 9.8
-    max_torque: 2.0
-    m: 1.5
-    l: 2.0

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from eval import evaluate_agent
 from utils import make_env
 from tasks import TaskManager
-from agent import PPOAgent,BasePPOAgent
+from agent import PPOAgent
 import gymnasium as gym
 import numpy as np
 import torch
@@ -101,7 +101,7 @@ class Args:
     """the number of iterations (computed in runtime)"""
 
     # for evaluation
-    do_eval: bool = False
+    do_eval: bool = True
     """whether to evaluate the agent periodically"""
     eval_episodes: int = 10
     """number of episodes to test the agent during evaluation"""
@@ -109,12 +109,14 @@ class Args:
     """number of stable hits to consider convergence"""
 
     # for task switching
-    tasl_config_file: str = "task_config.yaml"
+    task_config_file: str = "config/task_config.yaml"
     """path to the task configuration file (YAML format)"""
     task_switch_episode_interval: int = 300
     """number of episodes between each task switch"""
     num_tasks: int = 4
     """total number of tasks"""
+    cycle: int = 1
+    """number of cycles to run through the tasks"""
 
 if __name__ == "__main__":
     args = tyro.cli(Args)
@@ -122,9 +124,7 @@ if __name__ == "__main__":
     args.minibatch_size = int(args.batch_size // args.num_minibatches)
     args.num_iterations = args.total_timesteps // args.batch_size
     # TODO: remove this check later
-    model_exists = args.model_path is not None
-    # run_name = f"{args.env_id}__{args.algorithm}__{args.seed}__{int(time.time())}"
-    run_name = f"{args.env_id}__{args.algorithm}__{model_exists}_{args.seed}__{int(time.time())}"
+    run_name = f"{args.env_id}__{args.algorithm}__{args.seed}__{int(time.time())}"
     if args.track:
         import wandb
 
@@ -155,8 +155,6 @@ if __name__ == "__main__":
     env = make_env(args.env_id, args.capture_video, run_name)()
 
     if args.algorithm == "base":
-        # TODO: choose one of the agents
-        # agent = BasePPOAgent(env).to(device)
         agent = PPOAgent(env, add_diag_layer=False).to(device)
     elif args.algorithm == "parseval":
         agent = PPOAgent(env, net_width=args.net_width,
@@ -169,7 +167,7 @@ if __name__ == "__main__":
         agent.load_state_dict(torch.load(args.model_path, map_location=device))
         print(f"Loaded model from {args.model_path}")
 
-    task_manager = TaskManager(env)
+    task_manager = TaskManager(env, task_config_file=args.task_config_file)
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
     # ALGO Logic: Storage setup
@@ -189,6 +187,7 @@ if __name__ == "__main__":
 
     # additional variables
     episode_count = 0
+    target_episode_count = args.cycle * args.num_tasks * args.task_switch_episode_interval
     convergence_episode = None
     best_task_performance = {t: -np.inf for t in range(args.num_tasks)}
     performance_matrix = np.zeros((args.num_tasks, args.num_tasks))
@@ -213,8 +212,7 @@ if __name__ == "__main__":
         raise NotImplementedError(f"Success threshold not defined for env {args.env_id}")
 
     for iteration in range(1, args.num_iterations + 1):
-        # TODO: take care of this if condition later
-        if episode_count <= 1000:
+        if episode_count <= target_episode_count:
             # Annealing the rate if instructed to do so.
             if args.anneal_lr:
                 frac = 1.0 - (iteration - 1.0) / args.num_iterations
@@ -262,86 +260,86 @@ if __name__ == "__main__":
                         if isinstance(value, (float, int, np.floating, np.integer)):
                             writer.add_scalar(f"agent/{key}", value, episode_count)
 
-                    # if episode_count % args.task_switch_episode_interval == 0:
-                    #     prev_task = current_task
-                    #     current_task = (current_task + 1) % args.num_tasks
+                    if episode_count % args.task_switch_episode_interval == 0:
+                        prev_task = current_task
+                        current_task = (current_task + 1) % args.num_tasks
 
-                    #     # Apply new physics
-                    #     task_manager.set_task(current_task)
+                        # Apply new physics
+                        task_manager.set_task(current_task)
 
-                    #     # Reset environment state
-                    #     env.reset()
+                        # Reset environment state
+                        env.reset()
 
-                    #     print(f"---- SWITCH TO TASK {current_task + 1} ----")
+                        print(f"---- SWITCH TO TASK {current_task + 1} ----")
 
-                    #     # ==================================
-                    #     # 2. RUN EVALUATION ON *ALL* TASKS
-                    #     # ==================================
-                    #     if args.do_eval:
-                    #         print("Evaluating on all tasks...")
-                    #         task_returns = []
-                    #         task_success = []
-                    #         forgetting_scores = []
-                    #         for task_id in range(args.num_tasks):
-                    #             print(f"Evaluating on Task {task_id + 1}...")
+                        # ==================================
+                        # 2. RUN EVALUATION ON *ALL* TASKS
+                        # ==================================
+                        if args.do_eval:
+                            print("Evaluating on all tasks...")
+                            task_returns = []
+                            task_success = []
+                            forgetting_scores = []
+                            for task_id in range(args.num_tasks):
+                                print(f"Evaluating on Task {task_id + 1}...")
 
-                    #             mean_return, success_rate = evaluate_agent(
-                    #                 agent, make_env, args, device,
-                    #                 success_threshold=success_threshold,
-                    #                 task_manager=task_manager,
-                    #                 task_id=task_id,
-                    #                 eval_episodes=args.eval_episodes
-                    #             )
+                                mean_return, success_rate = evaluate_agent(
+                                    agent, make_env, args, device,
+                                    success_threshold=success_threshold,
+                                    task_manager=task_manager,
+                                    task_id=task_id,
+                                    eval_episodes=args.eval_episodes
+                                )
 
-                    #             # ---------------------------
-                    #             # Log direct performance
-                    #             # ---------------------------
-                    #             writer.add_scalar(f"eval/task_{task_id}/mean_return", mean_return, episode_count)
-                    #             writer.add_scalar(f"eval/task_{task_id}/success_rate", success_rate, episode_count)
+                                # ---------------------------
+                                # Log direct performance
+                                # ---------------------------
+                                writer.add_scalar(f"eval/task_{task_id}/mean_return", mean_return, episode_count)
+                                writer.add_scalar(f"eval/task_{task_id}/success_rate", success_rate, episode_count)
 
-                    #             task_returns.append(mean_return)
-                    #             task_success.append(success_rate)
+                                task_returns.append(mean_return)
+                                task_success.append(success_rate)
 
-                    #             # ---------------------------
-                    #             # Update performance matrix
-                    #             # ---------------------------
-                    #             performance_matrix[task_id][prev_task] = mean_return
+                                # ---------------------------
+                                # Update performance matrix
+                                # ---------------------------
+                                performance_matrix[task_id][prev_task] = mean_return
 
-                    #             # ---------------------------
-                    #             # Compute Forgetting BEFORE updating best_per_task
-                    #             # ---------------------------
-                    #             if (
-                    #                 task_seen[task_id]              # Task must have been trained before
-                    #                 and current_cycle > 0           # Skip first cycle
-                    #                 and task_id != prev_task        # Don't compute forgetting for task just trained
-                    #             ):
-                    #                 forgetting = best_per_task[task_id] - mean_return
-                    #                 forgetting = max(forgetting, 0.0)   # prevent negative forgetting due to noise
-                    #             else:
-                    #                 forgetting = 0.0
+                                # ---------------------------
+                                # Compute Forgetting BEFORE updating best_per_task
+                                # ---------------------------
+                                if (
+                                    task_seen[task_id]              # Task must have been trained before
+                                    and current_cycle > 0           # Skip first cycle
+                                    and task_id != prev_task        # Don't compute forgetting for task just trained
+                                ):
+                                    forgetting = best_per_task[task_id] - mean_return
+                                    forgetting = max(forgetting, 0.0)   # prevent negative forgetting due to noise
+                                else:
+                                    forgetting = 0.0
 
-                    #             writer.add_scalar(f"eval/task_{task_id}/forgetting", forgetting, episode_count)
-                    #             forgetting_scores.append(forgetting)
+                                writer.add_scalar(f"eval/task_{task_id}/forgetting", forgetting, episode_count)
+                                forgetting_scores.append(forgetting)
 
-                    #             # ---------------------------
-                    #             # Now update best_per_task AFTER forgetting calculation
-                    #             # ---------------------------
-                    #             best_per_task[task_id] = max(best_per_task[task_id], mean_return)
-                    #             import json
-                    #             save_path = f"{args.save_path}/{run_name}/best_per_task.json"
-                    #             with open(save_path, "w") as f:
-                    #                 json.dump(best_per_task, f, indent=4)
-                    #             # ---------------------------
-                    #             # Convergence tracking
-                    #             # ---------------------------
-                    #             if success_rate == 1.0:
-                    #                 task_stable_hits[task_id] += 1
-                    #             else:
-                    #                 task_stable_hits[task_id] = 0
+                                # ---------------------------
+                                # Now update best_per_task AFTER forgetting calculation
+                                # ---------------------------
+                                best_per_task[task_id] = max(best_per_task[task_id], mean_return)
+                                import json
+                                save_path = f"{args.save_path}/{run_name}/best_per_task.json"
+                                with open(save_path, "w") as f:
+                                    json.dump(best_per_task, f, indent=4)
+                                # ---------------------------
+                                # Convergence tracking
+                                # ---------------------------
+                                if success_rate == 1.0:
+                                    task_stable_hits[task_id] += 1
+                                else:
+                                    task_stable_hits[task_id] = 0
                                         
-                    #         writer.add_scalar("eval/avg_mean_return", np.mean(task_returns), episode_count)
-                    #         writer.add_scalar("eval/avg_success_rate", np.mean(task_success), episode_count)
-                    #         writer.add_scalar("eval/avg_forgetting", np.mean(forgetting_scores), episode_count)
+                            writer.add_scalar("eval/avg_mean_return", np.mean(task_returns), episode_count)
+                            writer.add_scalar("eval/avg_success_rate", np.mean(task_success), episode_count)
+                            writer.add_scalar("eval/avg_forgetting", np.mean(forgetting_scores), episode_count)
                         
                         # check if all tasks have converged
                         if all([task_stable_hits[t] >= args.stable_hits_required for t in range(args.num_tasks)]):
