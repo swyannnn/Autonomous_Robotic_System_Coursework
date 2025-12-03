@@ -270,35 +270,35 @@ if __name__ == "__main__":
 
 # example usage:
 # python plot_tb_scalars.py --runs "runs/CartPole-v1__base_*" --tag "charts/episodic_return" \
-# --output "results_export/CartPole-v1/base/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
+# --output "results/CartPole-v1/base/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
 # --title "CartPole-v1 Base Algorithm" 
 
 # python plot_tb_scalars.py --runs "runs/CartPole-v1__parseval_*" --tag "charts/episodic_return" \
-# --output "results_export/CartPole-v1/parseval/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
+# --output "results/CartPole-v1/parseval/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
 # --title "CartPole-v1 Parseval Algorithm" 
 
 # python plot_tb_scalars.py --runs "runs/Acrobot-v1__base_*" --tag "charts/episodic_return" \
-# --output "results_export/Acrobot-v1/base/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
+# --output "results/Acrobot-v1/base/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
 # --title "Acrobot-v1 Base Algorithm" 
 
 # python plot_tb_scalars.py --runs "runs/Acrobot-v1__parseval_*" --tag "charts/episodic_return" \
-# --output "results_export/Acrobot-v1/parseval/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
+# --output "results/Acrobot-v1/parseval/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
 # --title "Acrobot-v1 Parseval Algorithm" 
 
 # FOR LAYER COSINE SIMILARITY:
 
-# python plot_tb_scalars.py --runs "runs/Acrobot-v1__parseval_*" --tag "agent/actor_cosine_sim_layer_2" \
-# --output "results_export/Acrobot-v1/parseval/avg_actor_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
-# --title "Acrobot-v1 Parseval Algorithm" 
+# python plot_tb_scalars.py --runs "runs/CartPole-v1__parseval_*" --tag "agent/actor_cosine_sim_layer_2" \
+# --output "results/CartPole-v1/parseval/avg_actor_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
+# --title "CartPole-v1 Parseval Algorithm" 
 
-# python plot_tb_scalars.py --runs "runs/Acrobot-v1__base_*" --tag "agent/actor_cosine_sim_layer_2" \
-# --output "results_export/Acrobot-v1/base/avg_actor_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
-# --title "Acrobot-v1 Base Algorithm" 
+# python plot_tb_scalars.py --runs "runs/CartPole-v1__base_*" --tag "agent/actor_cosine_sim_layer_2" \
+# --output "results/CartPole-v1/base/avg_actor_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
+# --title "CartPole-v1 Base Algorithm" 
 
-# python plot_tb_scalars.py --runs "runs/Acrobot-v1__parseval_*" --tag "agent/actor_cosine_sim_layer_2" \
-# --output "results_export/Acrobot-v1/parseval/avg_actor_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
-# --title "Acrobot-v1 Parseval Algorithm" 
+# python plot_tb_scalars.py --runs "runs/CartPole-v1__parseval_*" --tag "agent/critic_cosine_sim_layer_2" \
+# --output "results/CartPole-v1/parseval/avg_critic_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
+# --title "CartPole-v1 Parseval Algorithm" 
 
-# python plot_tb_scalars.py --runs "runs/Acrobot-v1__base_*" --tag "agent/actor_cosine_sim_layer_2" \
-# --output "results_export/Acrobot-v1/base/avg_actor_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
-# --title "Acrobot-v1 Base Algorithm" 
+# python plot_tb_scalars.py --runs "runs/CartPole-v1__base_*" --tag "agent/critic_cosine_sim_layer_2" \
+# --output "results/CartPole-v1/base/avg_critic_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
+# --title "CartPole-v1 Base Algorithm" 

@@ -172,31 +172,47 @@ if __name__ == "__main__":
 
 # example usage:
 # python plot_compare_ci.py \
-# --base_path "results_export/CartPole-v1/base" \
-# --parseval_path "results_export/CartPole-v1/parseval" \
+# --base_path "results/CartPole-v1/base" \
+# --parseval_path "results/CartPole-v1/parseval" \
 # --interval 300 \
-# --title "Base vs Parseval PPO on CartPole-v1 (95% CI)" \
-# --output "results_export/CartPole-v1/compare_ci.png"
+# --title "Base vs Parseval PPO on CartPole-v1 (95% Confidence Interval)" \
+# --output "results/CartPole-v1/compare_ci.png"
 
 # python plot_compare_ci.py \
-# --base_path "results_export/Acrobot-v1/base" \
-# --parseval_path "results_export/Acrobot-v1/parseval" \
+# --base_path "results/Acrobot-v1/base" \
+# --parseval_path "results/Acrobot-v1/parseval" \
 # --interval 300 \
-# --title "Base vs Parseval PPO on Acrobot-v1 (95% CI)" \
-# --output "results_export/Acrobot-v1/compare_ci.png"
+# --title "Base vs Parseval PPO on Acrobot-v1 (95% Confidence Interval )" \
+# --output "results/Acrobot-v1/compare_ci.png"
 
 # python plot_compare_ci.py \
-# --base_path "results_export/Acrobot-v1/base" \
-# --parseval_path "results_export/Acrobot-v1/parseval" \
+# --base_path "results/Acrobot-v1/base" \
+# --parseval_path "results/Acrobot-v1/parseval" \
 # --interval 300 \
 # --title "Critic Cosine Similarity Layer 2" \
-# --output "results_export/Acrobot-v1/compare_ci_critic_cosine_sim_layer_2.png" \
+# --output "results/Acrobot-v1/compare_ci_critic_cosine_sim_layer_2.png" \
 # --tag "critic_cosine_sim_layer_2"
 
 # python plot_compare_ci.py \
-# --base_path "results_export/Acrobot-v1/base" \
-# --parseval_path "results_export/Acrobot-v1/parseval" \
+# --base_path "results/Acrobot-v1/base" \
+# --parseval_path "results/Acrobot-v1/parseval" \
 # --interval 300 \
 # --title "Actor Cosine Similarity Layer 2" \
-# --output "results_export/Acrobot-v1/compare_ci_actor_cosine_sim_layer_2.png" \
+# --output "results/Acrobot-v1/compare_ci_actor_cosine_sim_layer_2.png" \
+# --tag "actor_cosine_sim_layer_2"
+
+# python plot_compare_ci.py \
+# --base_path "results/CartPole-v1/base" \
+# --parseval_path "results/CartPole-v1/parseval" \
+# --interval 300 \
+# --title "Critic Cosine Similarity Layer 2" \
+# --output "results/CartPole-v1/compare_ci_critic_cosine_sim_layer_2.png" \
+# --tag "critic_cosine_sim_layer_2"
+
+# python plot_compare_ci.py \
+# --base_path "results/CartPole-v1/base" \
+# --parseval_path "results/CartPole-v1/parseval" \
+# --interval 300 \
+# --title "Actor Cosine Similarity Layer 2" \
+# --output "results/CartPole-v1/compare_ci_actor_cosine_sim_layer_2.png" \
 # --tag "actor_cosine_sim_layer_2"
