@@ -1,12 +1,14 @@
 # EXAMPLE USAGE:
 # python analysis_scripts/analyse_model.py --root_pattern "runs/CartPole-v1__base_*" --env_id "CartPole-v1"
 # python analysis_scripts/analyse_model.py --root_pattern "runs/Acrobot-v1__parseval_*" --env_id "Acrobot-v1"
- 
+
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import torch
 import numpy as np
 import json
 import glob
-import os
 import argparse
 from agent import PPOAgent
 from utils import make_env

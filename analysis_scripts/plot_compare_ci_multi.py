@@ -1,5 +1,5 @@
 # EXAMPLE USAGE:
-# python plot_compare_ci_multi.py \
+# python analysis_scripts/plot_compare_ci_multi.py \
 #     --cartpole_base results/CartPole-v1/base \
 #     --cartpole_parseval results/CartPole-v1/parseval \
 #     --acrobot_base results/Acrobot-v1/base \

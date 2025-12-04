@@ -1,5 +1,5 @@
 # EXAMPLE USAGE:
-# python plot_tb_scalars.py --runs "runs/CartPole-v1__base_*" --tag "charts/episodic_return" \
+# python analysis_scripts/plot_tb_scalars.py --runs "runs/CartPole-v1__base_*" --tag "charts/episodic_return" \
 # --output "results/CartPole-v1/base/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
 # --title "CartPole-v1 Base Algorithm" 
 
@@ -10,7 +10,6 @@ from tensorboard.backend.event_processing.event_accumulator import EventAccumula
 import glob
 import os
 import json
-import csv
 
 def load_scalar(event_file, tag):
     """
