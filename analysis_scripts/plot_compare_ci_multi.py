@@ -1,10 +1,31 @@
+# EXAMPLE USAGE:
+# python plot_compare_ci_multi.py \
+#     --cartpole_base results/CartPole-v1/base \
+#     --cartpole_parseval results/CartPole-v1/parseval \
+#     --acrobot_base results/Acrobot-v1/base \
+#     --acrobot_parseval results/Acrobot-v1/parseval \
+#     --tag episodic_return \
+#     --interval 300 \
+#     --max_x 1200 \
+#     --title "Episodic Return Across Environments: Base vs Parseval PPO (95% CI)" \
+#     --output results/episodic_return.png
+ 
 import numpy as np
 import json
 import matplotlib.pyplot as plt
 import argparse
 
 
-def load_data(npy_file, json_file):
+def load_data(npy_file: str, json_file: str) -> tuple:
+    """
+    Load run data from .npy and .json files.
+    Args:
+        npy_file (str): Path to the .npy file containing run data.
+        json_file (str): Path to the .json file containing stats data.
+    Returns:
+        x (np.ndarray): X-axis values (e.g., episodes).
+        runs (np.ndarray): Run data array of shape [num_seeds, num_points].
+    """
     runs = np.load(npy_file)  # shape: [num_seeds, num_points]
     with open(json_file, "r") as f:
         stats = json.load(f)
@@ -12,7 +33,16 @@ def load_data(npy_file, json_file):
     return x, runs
 
 
-def compute_95_ci(runs):
+def compute_95_ci(runs: np.ndarray) -> tuple:
+    """
+    Compute 95% confidence intervals for the given runs.
+    Args:
+        runs (np.ndarray): Array of shape [num_seeds, num_points].
+    Returns:
+        mean (np.ndarray): Mean values across runs.
+        low (np.ndarray): Lower bound of 95% CI.
+        high (np.ndarray): Upper bound of 95% CI.
+    """
     mean = runs.mean(axis=0)
     std = runs.std(axis=0)
     n = runs.shape[0]
@@ -22,10 +52,17 @@ def compute_95_ci(runs):
     return mean, mean - ci95, mean + ci95
 
 
-# ----------------------------------------------------------
-# Plot comparison (4 curves)
-# ----------------------------------------------------------
-def plot_ci_compare_multi(datasets, interval, title, output):
+def plot_ci_compare_multi(datasets: list, interval: int, title: str, output: str) -> None:
+    """
+    Plot multiple datasets with 95% confidence intervals.
+    Args:
+        datasets (list): List of tuples (label, x, mean, low, high).
+        interval (int): Interval for task markers.
+        title (str): Plot title.
+        output (str): Output file path.
+    Returns:
+        None
+    """
     plt.style.use("seaborn-v0_8-white")
     plt.figure(figsize=(12, 5))
 
@@ -65,30 +102,14 @@ def plot_ci_compare_multi(datasets, interval, title, output):
     plt.savefig(output, dpi=300)
     print(f"[SAVED] {output}")
 
-
-# ----------------------------------------------------------
-# Main CLI
-# ----------------------------------------------------------
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("--cartpole_base", required=True)
-    parser.add_argument("--cartpole_parseval", required=True)
-    parser.add_argument("--acrobot_base", required=True)
-    parser.add_argument("--acrobot_parseval", required=True)
-
-    parser.add_argument("--tag", default="episodic_return")
-
-    # NEW ARGUMENTS HERE
-    parser.add_argument("--min_x", type=int, default=0)
-    parser.add_argument("--max_x", type=int, default=1200)
-
-    parser.add_argument("--interval", type=int, default=300)
-    parser.add_argument("--title", default="Base vs Parseval PPO (95% CI)")
-    parser.add_argument("--output", default="compare_ci_clean.png")
-
-    args = parser.parse_args()
-
+def main(args):
+    """
+    Main function to load data, compute CIs, and plot comparisons.
+    Args:
+        args: Command-line arguments.
+    Returns:
+        None
+    """
     # Load CartPole
     xb_c, rb_c = load_data(f"{args.cartpole_base}/avg_{args.tag}_runs.npy",
                            f"{args.cartpole_base}/avg_{args.tag}_stats.json")
@@ -132,51 +153,19 @@ if __name__ == "__main__":
         output=args.output,
     )
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
 
+    parser.add_argument("--cartpole_base", required=True)
+    parser.add_argument("--cartpole_parseval", required=True)
+    parser.add_argument("--acrobot_base", required=True)
+    parser.add_argument("--acrobot_parseval", required=True)
+    parser.add_argument("--tag", default="episodic_return")
+    parser.add_argument("--min_x", type=int, default=0)
+    parser.add_argument("--max_x", type=int, default=1200)
+    parser.add_argument("--interval", type=int, default=300)
+    parser.add_argument("--title", default="Base vs Parseval PPO (95% CI)")
+    parser.add_argument("--output", default="compare_ci_clean.png")
 
-# example usage:
-# python plot_compare_ci_multi.py \
-#     --cartpole_base results/CartPole-v1/base \
-#     --cartpole_parseval results/CartPole-v1/parseval \
-#     --acrobot_base results/Acrobot-v1/base \
-#     --acrobot_parseval results/Acrobot-v1/parseval \
-#     --tag episodic_return \
-#     --interval 300 \
-#     --max_x 1200 \
-#     --title "Episodic Return Across Environments: Base vs Parseval PPO (95% CI)" \
-#     --output results/episodic_return.png
-
-# python plot_compare_ci_multi.py \
-#     --cartpole_base results/CartPole-v1/base \
-#     --cartpole_parseval results/CartPole-v1/parseval \
-#     --acrobot_base results/Acrobot-v1/base \
-#     --acrobot_parseval results/Acrobot-v1/parseval \
-#     --tag actor_cosine_sim_layer_2 \
-#     --interval 300 \
-#     --max_x 1200 \
-#     --title "Actor Cosine Similarity Across Environments: Base vs Parseval PPO (95% C)" \
-#     --output results/actor_cosine_sim_layer_2.png
-
-# python plot_compare_ci_multi.py \
-#     --cartpole_base results/CartPole-v1/base \
-#     --cartpole_parseval results/CartPole-v1/parseval \
-#     --acrobot_base results/Acrobot-v1/base \
-#     --acrobot_parseval results/Acrobot-v1/parseval \
-#     --tag critic_cosine_sim_layer_2 \
-#     --interval 300 \
-#     --max_x 1200 \
-#     --title "Critic Cosine Similarity Across Environments: Base vs Parseval PPO (95% CI)" \
-#     --output results/critic_cosine_sim_layer_2.png
-
-
-# python plot_compare_ci_multi.py \
-#     --cartpole_base results/Acrobot-v1/base \
-#     --cartpole_parseval results/Acrobot-v1/parseval \
-#     --acrobot_base  results_task_3/clean2/Acrobot-v1/base \
-#     --acrobot_parseval results_task_3/clean2/Acrobot-v1/parseval \
-#     --tag episodic_return \
-#     --interval 300 \
-#     --min_x 600 \
-#     --max_x 900 \
-#     --title "Task-3 Performance: Single-Task Training vs Sequential Continual Learning" \
-#     --output results_task_3/episodic_return_task_3_test.png
+    args = parser.parse_args()
+    main(args)

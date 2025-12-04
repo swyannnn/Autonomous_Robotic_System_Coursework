@@ -1,14 +1,31 @@
+# EXAMPLE USAGE:
+# python analysis_scripts/analyse_model.py --root_pattern "runs/CartPole-v1__base_*" --env_id "CartPole-v1"
+# python analysis_scripts/analyse_model.py --root_pattern "runs/Acrobot-v1__parseval_*" --env_id "Acrobot-v1"
+ 
 import torch
 import numpy as np
 import json
 import glob
 import os
+import argparse
 from agent import PPOAgent
 from utils import make_env
 from tasks import TaskManager
 
 
-def evaluate_model_on_all_tasks(agent, env, task_manager, num_tasks, eval_episodes, device):
+def evaluate_model_on_all_tasks(agent: PPOAgent, env: torch.nn.Module, task_manager: TaskManager, num_tasks: int, eval_episodes: int, device: str) -> dict:
+    """
+    Evaluate the given agent on all tasks managed by task_manager.
+    Args:
+        agent: The trained PPO agent.
+        env: The environment instance.
+        task_manager: An instance of TaskManager to switch tasks.
+        num_tasks: Total number of tasks.
+        eval_episodes: Number of evaluation episodes per task.
+        device: Device to run the computations on.
+    Returns:
+        A dictionary mapping task IDs to their average returns.
+    """
     task_returns = {}
 
     for task_id in range(num_tasks):
@@ -38,7 +55,15 @@ def evaluate_model_on_all_tasks(agent, env, task_manager, num_tasks, eval_episod
     return task_returns
 
 
-def compute_forgetting_single_trial(perf, num_tasks=4):
+def compute_forgetting_single_trial(perf: dict, num_tasks: int = 4) -> dict:
+    """
+    Compute forgetting for a single trial.
+    Args:
+        perf: A dictionary mapping checkpoint IDs to performance on tasks.
+        num_tasks: Total number of tasks.
+    Returns:
+        A dictionary mapping old tasks and checkpoints to forgetting values.
+    """
     forgetting = {}
     for old_task in range(num_tasks):
         forgetting[old_task] = {}
@@ -54,16 +79,27 @@ def compute_forgetting_single_trial(perf, num_tasks=4):
     return forgetting
 
 
-def evaluate_multi_trial_forgetting(
-    root_pattern,
-    env_id="CartPole-v1",
-    algorithm="base",
-    num_tasks=4,
-    eval_episodes=20,
-    episode_per_task=300,
-    device="cuda",
-    output_dir="results_export"
-):
+def evaluate_multi_trial_forgetting(root_pattern: str, env_id: str = "CartPole-v1", 
+                                    algorithm: str = "base", num_tasks: int = 4, 
+                                    eval_episodes: int = 20, episode_per_task: int = 300, 
+                                    device: str = "cuda", output_dir: str = "results_export"
+                                    ) -> tuple:
+    """
+    Evaluate multiple trials for forgetting analysis.
+    Args:
+        root_pattern: Glob pattern to match multiple trial directories.
+        env_id: Environment ID.
+        algorithm: Algorithm type ("base" or "parseval").
+        num_tasks: Total number of tasks.
+        eval_episodes: Number of evaluation episodes per task.
+        episode_per_task: Number of training episodes per task.
+        device: Device to run the computations on.
+        output_dir: Directory to save the results.
+    Returns:
+        perf_all_trials: List of performance dictionaries for all trials.
+        forgetting_mean: Mean forgetting values across trials.
+        forgetting_std: Standard deviation of forgetting values across trials.
+    """
     os.makedirs(output_dir, exist_ok=True)
     base_paths = sorted(glob.glob(root_pattern))
     print(f"Found {len(base_paths)} trials.")
@@ -135,17 +171,31 @@ def evaluate_multi_trial_forgetting(
 
     return perf_all_trials, forgetting_mean, forgetting_std
 
-if __name__ == "__main__":
-    root_pattern = "runs/Acrobot-v1__parseval_*"
-    env_id = "Acrobot-v1"
-    algorithm = "parseval" if "parseval" in root_pattern else "base"
+def main(args):
+    """
+    Main function to load data, compute CIs, and plot comparisons.
+    Args:
+        args: Command-line arguments.
+    Returns:
+        None
+    """
+    env_id = "Acrobot-v1" if "Acrobot" in args.root_pattern else "CartPole-v1"
+    algorithm = "parseval" if "parseval" in args.root_pattern else "base"
+    device = "cuda" if torch.cuda.is_available() else "cpu"
     evaluate_multi_trial_forgetting(
-        root_pattern=root_pattern,
+        root_pattern=args.root_pattern,
         env_id=env_id,
         algorithm=algorithm,
         num_tasks=4,
         eval_episodes=20,
         episode_per_task=300,
-        device="cuda", 
+        device=device,
         output_dir=f"results_export/{env_id}/{algorithm}"
     )
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--root_pattern", type=str, required=True, help="Glob pattern to match multiple trial directories. (e.g 'runs/CartPole-v1__base_*')")
+    parser.add_argument("--env_id", type=str, default="CartPole-v1")
+    args = parser.parse_args()
+    main(args)

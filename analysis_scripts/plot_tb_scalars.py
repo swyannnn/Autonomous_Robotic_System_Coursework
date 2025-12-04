@@ -1,3 +1,8 @@
+# EXAMPLE USAGE:
+# python plot_tb_scalars.py --runs "runs/CartPole-v1__base_*" --tag "charts/episodic_return" \
+# --output "results/CartPole-v1/base/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
+# --title "CartPole-v1 Base Algorithm" 
+
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
@@ -222,22 +227,14 @@ def plot_task_segments(
     plt.savefig(output, dpi=300)
     print(f"[SAVED] plot → {output}")
 
-
-# ============================================================
-# MAIN
-# ============================================================
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--runs", nargs="+", required=True)
-    parser.add_argument("--tag", type=str, required=True)
-    parser.add_argument("--output", type=str, required=True)
-    parser.add_argument("--interval", type=int, default=300)
-    parser.add_argument("--title", type=str, default=None)
-    parser.add_argument("--cycles", type=int, default=4)
-    parser.add_argument("--ma_window", type=int, default=51)
-    parser.add_argument("--compute_metrics", action="store_true")
-    args = parser.parse_args()
-
+def main(args):
+    """
+    Main function to load data, compute CIs, and plot comparisons.
+    Args:
+        args: Command-line arguments.   
+    Returns:
+        None
+    """
     # ensure output directory exists
     os.makedirs(os.path.dirname(args.output), exist_ok=True)
 
@@ -268,62 +265,16 @@ if __name__ == "__main__":
 
         print("[SAVED] performance_matrix.csv, cl_metrics.json")
 
-# example usage:
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--runs", nargs="+", required=True)
+    parser.add_argument("--tag", type=str, required=True)
+    parser.add_argument("--output", type=str, required=True)
+    parser.add_argument("--interval", type=int, default=300)
+    parser.add_argument("--title", type=str, default=None)
+    parser.add_argument("--cycles", type=int, default=4)
+    parser.add_argument("--ma_window", type=int, default=51)
+    parser.add_argument("--compute_metrics", action="store_true")
+    args = parser.parse_args()
+    main(args)
 
-# FOR AVERAGE EPISODIC RETURN:
-
-# python plot_tb_scalars.py --runs "runs/CartPole-v1__base_*" --tag "charts/episodic_return" \
-# --output "results/CartPole-v1/base/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
-# --title "CartPole-v1 Base Algorithm" 
-
-# python plot_tb_scalars.py --runs "runs/CartPole-v1__parseval_*" --tag "charts/episodic_return" \
-# --output "results/CartPole-v1/parseval/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
-# --title "CartPole-v1 Parseval Algorithm" 
-
-# python plot_tb_scalars.py --runs "runs/Acrobot-v1__base_*" --tag "charts/episodic_return" \
-# --output "results/Acrobot-v1/base/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
-# --title "Acrobot-v1 Base Algorithm" 
-
-# python plot_tb_scalars.py --runs "runs/Acrobot-v1__parseval_*" --tag "charts/episodic_return" \
-# --output "results/Acrobot-v1/parseval/avg_episodic_return.png" --interval 300 --cycles 4 --compute_metrics \
-# --title "Acrobot-v1 Parseval Algorithm" 
-
-# FOR LAYER COSINE SIMILARITY:
-
-# python plot_tb_scalars.py --runs "runs/CartPole-v1__parseval_*" --tag "agent/actor_cosine_sim_layer_2" \
-# --output "results/CartPole-v1/parseval/avg_actor_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
-# --title "CartPole-v1 Parseval Algorithm" 
-
-# python plot_tb_scalars.py --runs "runs/CartPole-v1__base_*" --tag "agent/actor_cosine_sim_layer_2" \
-# --output "results/CartPole-v1/base/avg_actor_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
-# --title "CartPole-v1 Base Algorithm" 
-
-# python plot_tb_scalars.py --runs "runs/CartPole-v1__parseval_*" --tag "agent/critic_cosine_sim_layer_2" \
-# --output "results/CartPole-v1/parseval/avg_critic_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
-# --title "CartPole-v1 Parseval Algorithm" 
-
-# python plot_tb_scalars.py --runs "runs/CartPole-v1__base_*" --tag "agent/critic_cosine_sim_layer_2" \
-# --output "results/CartPole-v1/base/avg_critic_cosine_sim_layer_2.png" --interval 300 --cycles 4 \
-# --title "CartPole-v1 Base Algorithm" 
-
-
-
-
-
-
-
-# python plot_tb_scalars.py --runs "runs_exp1/Acrobot-v1__base__False_*" --tag "charts/episodic_return" \
-# --output "results_task_3/clean2/Acrobot-v1/base/avg_episodic_return.png" --interval 300 --cycles 1 \
-# --title "Acrobot-v1 Base Algorithm" 
-
-# python plot_tb_scalars.py --runs "runs_exp1/Acrobot-v1__parseval__False_*" --tag "charts/episodic_return" \
-# --output "results_task_3/clean2/Acrobot-v1/parseval/avg_episodic_return.png" --interval 300 --cycles 1 \
-# --title "Acrobot-v1 Parseval Algorithm" 
-
-# python plot_tb_scalars.py --runs "runs_exp/Acrobot-v1__base__True_*" --tag "charts/episodic_return" \
-# --output "results_task_3/600_episode/Acrobot-v1/base/avg_episodic_return.png" --interval 300 --cycles 1 \
-# --title "Acrobot-v1 Base Algorithm" 
-
-# python plot_tb_scalars.py --runs "runs_exp/Acrobot-v1__parseval__True_*" --tag "charts/episodic_return" \
-# --output "results_task_3/600_episode/Acrobot-v1/parseval/avg_episodic_return.png" --interval 300 --cycles 1 \
-# --title "Acrobot-v1 Parseval Algorithm" 
