@@ -90,6 +90,7 @@ conda activate ARS
 
 # Install dependencies
 pip install -r requirements.txt
+pip install matplotlib
 ```
 
 # 🧪 Reproducing Paper Results
