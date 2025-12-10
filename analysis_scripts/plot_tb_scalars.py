@@ -11,7 +11,7 @@ import glob
 import os
 import json
 
-def load_scalar(event_file, tag):
+def load_scalar(event_file: str, tag: str) -> tuple[np.ndarray, np.ndarray]:
     """
     Loads a scalar tag from a TensorBoard event file.
     Returns steps and values as numpy arrays.
@@ -34,7 +34,7 @@ def load_scalar(event_file, tag):
     return steps, values
 
 
-def load_runs(run_dirs, tag):
+def load_runs(run_dirs: list[str], tag: str) -> tuple[list[np.ndarray], list[np.ndarray]]:
     """
     Loads the specified scalar tag from multiple TensorBoard event files.
     Args:
@@ -63,7 +63,7 @@ def load_runs(run_dirs, tag):
 
     return all_steps, all_values
 
-def extract_switch_points(steps, interval, cycles):
+def extract_switch_points(steps: np.ndarray, interval: int, cycles: int) -> list[int]:
     """
     Finds the closest steps to the target evaluation points.
     Args:
@@ -82,7 +82,7 @@ def extract_switch_points(steps, interval, cycles):
     return switch_points
 
 
-def build_performance_matrix(run_dir, num_tasks, interval, cycles):
+def build_performance_matrix(run_dir: str, num_tasks: int, interval: int, cycles: int) -> np.ndarray:
     """
     Builds a performance matrix from TensorBoard logs for a single run.
     Args:
@@ -121,7 +121,7 @@ def build_performance_matrix(run_dir, num_tasks, interval, cycles):
 
     return perf_mat
 
-def compute_cl_metrics(perf):
+def compute_cl_metrics(perf: np.ndarray) -> dict[str, any]:
     """
     Computes Continual Learning metrics from the performance matrix.
     Args:
@@ -156,7 +156,7 @@ def compute_cl_metrics(perf):
         "BWT_per_task": bwt_per_task.tolist(),
     }
 
-def interpolate(all_steps, all_values, num_points=2000):
+def interpolate(all_steps: list[np.ndarray], all_values: list[np.ndarray], num_points=2000) -> tuple[np.ndarray, np.ndarray]:
     """
     Interpolates multiple runs to a common x-axis.
     Args:
@@ -174,12 +174,12 @@ def interpolate(all_steps, all_values, num_points=2000):
     return common_x, np.stack(interpolated)
 
 def plot_task_segments(
-    x,
-    runs,
-    output,
-    title,
-    ma_window=51,
-):
+    x: np.ndarray,
+    runs: np.ndarray,
+    output: str,
+    title: str,
+    ma_window: int = 51,
+) -> None:
     """
     Plots the mean and standard deviation of runs with task segments.
     Args:
@@ -226,7 +226,7 @@ def plot_task_segments(
     plt.savefig(output, dpi=300)
     print(f"[SAVED] plot → {output}")
 
-def main(args):
+def main(args: argparse.Namespace) -> None:
     """
     Main function to load data, compute CIs, and plot comparisons.
     Args:
@@ -276,4 +276,3 @@ if __name__ == "__main__":
     parser.add_argument("--compute_metrics", action="store_true")
     args = parser.parse_args()
     main(args)
-

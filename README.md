@@ -1,6 +1,76 @@
 # 🚀 COMP4082 Autonomous Robotic System Coursework
 
-This repository contains the codebase for reproducing the experimental results of our Autonomous Robotic System coursework, including CartPole and Acrobot continual reinforcement learning experiments.
+This repository contains the codebase for reproducing the experimental results of the paper "Parseval-Regularized PPO for Continual Control: Geometry vs Catastrophic Forgetting".
+
+# Overview
+This repository implements a multi-task reinforcement learning training loop using Proximal Policy Optimization (PPO) with optional Parseval regularization.
+It supports:
+- Multi-task switching with dynamic physics parameters
+- Periodic evaluation on all tasks
+- Continual learning metrics (forgetting score, performance matrix, stability tracking)
+- TensorBoard logging
+- Optional Weights & Biases integration
+- Model checkpointing and resuming
+- Both standard PPO and Parseval-PPO architectures
+
+The main entry point of the system is main.py, which loads environments, manages tasks, trains a PPO agent, evaluates periodically, and logs all results.
+
+## 📦 Features
+✔ 1. PPO Agent (Standard or Parseval)
+
+The training loop supports two network types:
+- "base" → default PPO MLP actor–critic
+- "parseval" → uses orthogonality-regularized layers for stability
+
+✔ 2. Multi-Task Environment Switching
+
+Every task_switch_episode_interval episodes:
+- The script switches to the next task
+- Applies new physics via TaskManager
+- Logs transitions
+
+✔ 3. Full Evaluation Loop
+
+On each task switch:
+- Evaluate the agent on all tasks
+- Compute: 
+    - mean return
+    - success rate
+    - forgetting score
+    - average performance
+    - convergence detection
+    
+Results are logged to TensorBoard.
+
+✔ 4. Continual Learning Metrics
+The script automatically tracks:
+- Best performance per task
+- Forgetting matrix
+- Stability hits (successes needed for convergence)
+
+✔ 5. Training Metrics & Logging
+- Logged to TensorBoard:
+- episodic return / length
+- policy loss, value loss, entropy
+- KL divergence
+- learning rate
+- explained variance
+- Parseval statistics (if enabled)
+- per-task evaluation metrics
+- task switching timeline
+
+## 🏗️ Repository Structure
+```
+.
+├── main.py                 # Main PPO + Multi-task training script
+├── agent.py                # PPOAgent implementation (base + Parseval)
+├── tasks.py                # TaskManager to dynamically modify task physics
+├── eval.py                 # Evaluation utilities
+├── utils.py                # Environment creation, logging helpers
+├── config/
+│   └── task_config.yaml    # Physics configuration for each task
+└── runs/                   # Automatically saved logs + models
+```
 
 # 📦 Installation
 ```
