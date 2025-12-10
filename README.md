@@ -62,14 +62,21 @@ The script automatically tracks:
 ## 🏗️ Repository Structure
 ```
 .
-├── main.py                 # Main PPO + Multi-task training script
-├── agent.py                # PPOAgent implementation (base + Parseval)
-├── tasks.py                # TaskManager to dynamically modify task physics
-├── eval.py                 # Evaluation utilities
-├── utils.py                # Environment creation, logging helpers
+├── main.py                          # Main PPO + Multi-task training script
+├── agent.py                         # PPOAgent implementation (base + Parseval)
+├── tasks.py                         # TaskManager to dynamically modify task physics
+├── eval.py                          # Evaluation utilities
+├── utils.py                         # Environment creation, logging helpers
 ├── config/
-│   └── task_config.yaml    # Physics configuration for each task
-└── runs/                   # Automatically saved logs + models
+│   └── task_config.yaml             # Physics configuration for each task
+├── automate_scripts/
+│   └── run_acrobot.sh               # automation script for acrobot-v1
+│   └── run_cartpole.sh              # automation script for cartpole-v1
+├── analysis_scripts/
+│   └── analyse_model.py             # tensorfile post-processing
+│   └── plot_compare_ci_multi.py     # evaluate model performance
+│   └── plot_tb_scalars.py           # plot performance graphs
+└── runs/                            # Automatically saved logs + models
 ```
 
 # 📦 Installation
